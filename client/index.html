@@ -1,0 +1,24 @@
+<!doctype html>
+<html ng-app="app">
+<head>
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="/app/assets/css/style.css">
+</head>
+<title>InstaFriends</title>
+<body ui-view>
+  <!-- vendors -->
+  <script type="text/javascript" src="/node_modules/angular/angular.js"></script>
+  <script type="text/javascript" src="/node_modules/angular-ui-router/release/angular-ui-router.js"></script>
+  <script type="text/javascript" src="/node_modules/jquery/dist/jquery.js"></script>
+  <script type="text/javascript" src="/node_modules/bootstrap/dist/js/bootstrap.js"></script>
+  <!-- entry point -->
+  <script type="text/javascript" src="/app/app.module.js"></script>
+  <script type="text/javascript" src="/app/app.config.route.js"></script>
+  <!-- core -->
+  <script type="text/javascript" src="/app/core/core.module.js"></script>
+  <!-- login -->
+  <script type="text/javascript" src="/app/login/login.module.js"></script>
+  <script type="text/javascript" src="/app/login/login.controller.js"></script>
+</body>
+</html>

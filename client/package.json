@@ -1,0 +1,25 @@
+{
+  "name": "instafriends",
+  "version": "0.0.1",
+  "description": "An app to find Instagram followers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/syeshchenko/InstaFriends.git"
+  },
+  "author": "",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/syeshchenko/InstaFriends/issues"
+  },
+  "homepage": "https://github.com/syeshchenko/InstaFriends#readme",
+  "dependencies": {
+    "angular": "^1.5.3",
+    "angular-ui-router": "^0.2.18",
+    "bootstrap": "^3.3.6",
+    "jquery": "^2.2.3"
+  }
+}
