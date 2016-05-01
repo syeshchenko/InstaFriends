@@ -7,33 +7,32 @@
   MainController.$inject = ['$location', '$rootScope', 'InfoService'];
 
   function MainController($location, $rootScope, InfoService) {
-   var vm = this;
-   vm.response;
-   vm.requestData = requestData;
+    var vm = this;
+    vm.response;
 
-   init();
+    init();
 
-   function init() {
+    function init() {
+      $rootScope.token = getTokenFromUrl();
+      requestProfileData();
+    }
 
-     $rootScope.token = getTokenFromUrl();
-   }
-
-   function requestData() {
-      InfoService.getPersonalData()
+    function requestProfileData() {
+      InfoService.getProfileData()
       .then(displayData);
-   }
+    }
 
-   function displayData(data) {
-       vm.response = data.data.data.username;
-   }
+    function displayData(data) {
+      vm.response = 'Welcome, ' + data.data.data.username;
+    }
 
-   function getTokenFromUrl() {
+    function getTokenFromUrl() {
 
-     var location = $location.path();
-     var array = location.split('=');
+      var location = $location.path();
+      var array = location.split('=');
 
-     return array[1];
-   }
+      return array[1];
+    }
 
   }
 })();

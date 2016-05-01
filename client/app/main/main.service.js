@@ -9,10 +9,10 @@
   function InfoService($http, $rootScope) {
 
     return {
-      getPersonalData: getPersonalData
+      getProfileData: getProfileData
     }
 
-    function getPersonalData() {
+    function getProfileData() {
       return $http.get('/getData', {
         params:
         {
