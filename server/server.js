@@ -1,42 +1,52 @@
-// http://www.sitepoint.com/how-to-use-ssltls-with-node-js/
+var express    = require('express');
+var app        = express();
+var bodyParser = require('body-parser');
+var morgan     = require('morgan');
+var mongoose   = require('mongoose');
+var passport   = require('passport');
+var session    = require('express-session');
+var flash      = require('connect-flash');
 
-var fs = require('fs');
-var https = require('https');
-var express = require('express');
-var request = require('request');
-var app = express();
-var port = 5000;
+var config = require('./config');
+var route  = require('./routes');
 
-var options = {
-  key  : fs.readFileSync('./server.key'),
-  cert : fs.readFileSync('./server.crt')
-};
+var apiRoutes = express.Router();
+require('./app/config/passport')(passport); // pass passport for configuration
 
+// set up app port
+var port = process.env.PORT || 5000;
+
+// connect to db
+mongoose.connect(config.dbConnection);
+
+// setup bodyParser middleware so we can get variables passed with request
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
+app.use(bodyParser.json());
+
+// set up logs output to console
+app.use(morgan('dev'));
+
+// required for passport
+app.use(session({ secret: config.secret })); // session secret
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+app.use(flash()); // use connect-flash for flash messages stored in session
+
+// serve static files
 app.use(express.static("../client/"));
+// TODO: Investigate if we need to explicitly specify index.html or if it's served automatically
+// app.get('/', function(req, res) {
+//   res.render('index.html');
+// });
 
-app.get('/', function(request, response) {
-  response.render('index.html');
-});
+// set up routes
+route.setup(apiRoutes, app, passport);
+app.use('/api', apiRoutes);
 
-https.createServer(options, app).listen(port, function () {
-  console.log('Started on ' + port + ' port!');
-});
+app.listen(port);
 
+console.log('magic happens at http://localhost:' + port);
 
-app.get('/getData', requestData);
-
-function requestData(req, res) {
-
-  var token = req.query.token;
-
-  var userInfoRequest= 'https://api.instagram.com/v1/users/self/?access_token=' + token;
-
-  request(userInfoRequest, function (error, response, body) {
-    if (!error && response.statusCode == 200) {
-      //console.log(body);
-      res.send(body);
-    }
-
-    if (error) console.log(error);
-  })
-}
+exports.app = app;
