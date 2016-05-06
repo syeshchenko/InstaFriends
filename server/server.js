@@ -7,11 +7,14 @@ var passport   = require('passport');
 var session    = require('express-session');
 var flash      = require('connect-flash');
 
-var config = require('./config');
-var route  = require('./routes');
+var config             = require('./config');
+var route              = require('./routes');
+var passportController = require('./app/controllers/passport');
+
+// pass passport for configuration
+passportController.initialize(passport);
 
 var apiRoutes = express.Router();
-require('./app/config/passport')(passport); // pass passport for configuration
 
 // set up app port
 var port = process.env.PORT || 5000;
@@ -44,6 +47,13 @@ app.use(express.static("../client/"));
 // set up routes
 route.setup(apiRoutes, app, passport);
 app.use('/api', apiRoutes);
+
+// error handling middleware
+app.use(function(err, req, res, next) {
+  console.log('error caught: ', err.stack);
+  res.status(err.status || 500);
+  res.json({'error': err.message});
+});
 
 app.listen(port);
 

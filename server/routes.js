@@ -1,5 +1,6 @@
 var express = require('express');
-var userController = require('./app/controllers/users');
+var usersController = require('./app/controllers/users');
+var authController = require('./app/controllers/auth');
 
 function setup(router, app, passport) {
 
@@ -13,31 +14,14 @@ function setup(router, app, passport) {
       failureRedirect: '/'
     }));
 
-  app.get('/')
-
   // route for logging out
-  app.get('/logout', function(req, res) {
-    req.logout();
-    res.redirect('/');
-  });
+  router.get('/logout', authController.logout);
+
+  // add isLoggedIn middleware
+  router.get('/profile', authController.isLoggedIn, usersController.getUserProfile);
 
   // API requests
-  router.get('/users', userController.getUsers);
-
-  router.get('/', function(req, res) {
-    res.json({
-      message: 'Welcome to the collest API on earth!'
-    });
-  });
-
-}
-
-function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-
-  res.redirect('/');
+  router.get('/users', authController.isLoggedIn, usersController.getUsers);
 }
 
 module.exports.setup = setup;
