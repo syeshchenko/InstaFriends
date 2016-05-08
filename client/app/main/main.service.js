@@ -13,12 +13,7 @@
     }
 
     function getProfileData() {
-      return $http.get('/getData', {
-        params:
-        {
-          token: $rootScope.token
-        }
-      });
+      return $http.get('/users');
     }
   }
 })();
