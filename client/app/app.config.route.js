@@ -19,7 +19,7 @@
       controllerAs: 'vm'
     })
     .state('main', { // this state user enters when he is logged in
-      url: '/access_token=:accessToken',
+      url: '/profile',
       templateUrl: '/app/main/main.html',
       controller: 'MainController',
       controllerAs: 'vm'
