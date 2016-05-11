@@ -10,14 +10,13 @@ var flash      = require('connect-flash');
 var config             = require('./config');
 var route              = require('./routes');
 var passportController = require('./app/controllers/passport');
+var serverConroller    = require('./app/controllers/server');
+
 
 // pass passport for configuration
 passportController.initialize(passport);
 
 var apiRoutes = express.Router();
-
-// set up app port
-var port = process.env.PORT || 5000;
 
 // connect to db
 mongoose.connect(config.dbConnection);
@@ -55,8 +54,7 @@ app.use(function(err, req, res, next) {
   res.json({'error': err.message});
 });
 
-app.listen(port);
-
-console.log('magic happens at http://localhost:' + port);
+// start http/https server
+serverConroller.create(app);
 
 exports.app = app;
