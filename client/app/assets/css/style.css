@@ -29,5 +29,91 @@ body {
   border-color: grey;
   border-width: 1px;
   height: 200px;
+}
+
+.poolUserFrame {
+  /*margin-top: 50px;*/
+}
+
+#candidateName {
+  font-size: 5vh;
+  font-weight: lighter;
+}
+
+#candidatePic {
+  border-radius: 7px;
+  height: 300px;
+}
+
+.button {
+  border-style: solid;
+  border-radius: 5px;
+  border-color: blue;
+  border-width: 2px;
+  height: 50px;
+  transition: 0.2s;
+  opacity: 0.4;
+}
+
+#acceptButton {
+  width: 400px;
+}
+
+.button:active {
+  opacity: 1;
+}
+
+.buttonPadding, .framePadding {
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 15px;
+}
+
+.picturesFrame {
+  /*margin-top: 2%;*/
+  height: 100px;
+  /*border-style: solid;
+  border-color: red;
+  border-width: 1px;*/
+}
+
+.frame {
+  height: 50px;
+  border-style: solid;
+  border-color: green;
+  border-width: 1px;
+  border-radius: 5px;
+}
+
+@media (min-width: 768px) {
+
+  .button {
+    height: 70px;
+  }
+
+  .buttonPadding, .framePadding {
+    padding-top: 30px;
+  }
+
+  #candidatePic {
+    height: 500px;
+  }
+
+  .frame {
+    height: 70px;
+  }
+}
+@media (min-width: 992px) {
+  .button {
+    height: 70px;
+  }
+  #candidatePic {
+    height: 400px;
+  }
+
+  .buttonPadding {
+    padding-top: 10px;
+  }
 
 }
+@media (min-width: 1200px) {  }
