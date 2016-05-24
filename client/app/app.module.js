@@ -3,7 +3,9 @@
 
   angular.module('app',[
     'app.core',
+    'app.main',
     'app.login',
-    'app.main'
+    'app.logout',
+    'app.pool'
   ]);
 })();
