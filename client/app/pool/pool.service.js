@@ -9,20 +9,37 @@
   function PoolService($http, $rootScope) {
 
     return {
-      getCandidateTokenFromServer: getCandidateTokenFromServer,
-      getCandidateDataFromInstagram: getCandidateDataFromInstagram
+      getCandidateProfile: getCandidateProfile,
+      getRecentMedia: getRecentMedia
     }
 
-    function getCandidateTokenFromServer() {
-      return $http.get('/api/users', { 'poolName': $rootScope.poolName }).then(extractToken);
+
+    function getCandidateProfile() {
+      return getCandidateTokenFromServer()
+      .then(getCandidateProfileClientSide)
     }
 
-    function extractToken(data) {
+    function getRecentMedia() {
+      return getCandidateTokenFromServer()
+      .then(getRecentMediaClientSide)
+    }
+
+    function getCandidateTokenFromServer() { // temporary
+      return $http.get('/api/users').then(extractToken);
+    }
+
+    function extractToken(data) { // temporary
       return data.data[0].instagram.token;
     }
 
-    function getCandidateDataFromInstagram(token) {
-      return $http.get('https://crossorigin.me/https://api.instagram.com/v1/users/self/?access_token=' + token);
+    function getCandidateProfileClientSide(token) {
+      return $http.jsonp('https://api.instagram.com/v1/users/self/?access_token='
+       + token + '&callback=JSON_CALLBACK' );
+    }
+
+    function getRecentMediaClientSide(token) {
+      return $http.jsonp('https://api.instagram.com/v1/users/self/media/recent/?access_token='
+    + token + '&callback=JSON_CALLBACK');
     }
 
   }

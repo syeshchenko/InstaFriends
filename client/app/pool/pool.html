@@ -1,53 +1,54 @@
-<div class="container-fluid" ng-model="vm">
-  <div class="row poolUserFrame">
-    <div class="col-sm-3 col-md-4"></div>
-    <div class="col-xs-12 col-sm-6 col-md-4 text-center" id="candidateName">
-      {{ vm.candidateName }}
-    </div>
-    <div class="col-sm-3 col-md-4"></div>
-  </div>
-  <div class="row">
-    <div class="col-sm-2 col-md-4"></div>
-    <div class="col-xs-12 col-sm-8 col-md-4 text-center">
-      <img class="img-responsive center-block" ng-src="{{vm.candidatePicUrl}}" id="candidatePic"/>
-    </div>
-    <div class="col-sm-2 col-md-4"></div>
-  </div>
-  <div class="row buttonPadding">
-    <div class="col-sm-2 col-md-4"></div>
-    <div id="acceptButton" class="col-xs-12 col-sm-8 col-md-4 button"></div>
-    <div class="col-sm-2 col-md-4"></div>
-  </div>
-  <div class="row buttonPadding">
-    <div class="col-sm-2 col-md-4"></div>
-    <div class="col-xs-12 col-sm-8 col-md-4">
-      <div class="row">
-        <div class="col-xs-5 button"></div>
-        <div class="col-xs-5 col-xs-offset-2 button"></div>
+<div class="fill" ng-model="vm">
+  <div class="row fill"> <!-- main row -->
+    <div class="col-md-4 col-sm-2 hidden-xs fill flex-end center clickable shade"><!-- left arrow -->
+      <div class="col-xs-4 flex-end" ng-click="vm.getNextCandidate()">
+        <img src="app/assets/svg/back.svg" height="50px" alt="back">
       </div>
     </div>
-    <div class="col-sm-2 col-md-4"></div>
-  </div>
-  <div class="row framePadding">
-    <div class="col-sm-2 col-md-4"></div>
-    <div class="col-xs-12 col-sm-8 col-md-4 picturesFrame">
-      <div class="row">
-        <div class="col-xs-2 frame"></div>
-        <div class="col-xs-2 frame"></div>
-        <div class="col-xs-2 frame"></div>
-        <div class="col-xs-2 frame"></div>
-        <div class="col-xs-2 frame"></div>
-        <div class="col-xs-2 frame"></div>
-      </div>
-      <div class="row">
-        <div class="col-xs-2 frame"></div>
-        <div class="col-xs-2 frame"></div>
-        <div class="col-xs-2 frame"></div>
-        <div class="col-xs-2 frame"></div>
-        <div class="col-xs-2 frame"></div>
-        <div class="col-xs-2 frame"></div>
+    <div class="col-md-4 col-sm-8 col-xs-12 padding-l-r-50 fill"> <!-- candidate frame -->
+      <div class="row"> <!-- candidate row -->
+        <div class="col-md-12">
+          <div class="row padding-b-30"> <!-- candidate name row -->
+            <div class="col-xs-12 text-center" id="candidateName">
+              {{ vm.candidateName }}
+            </div>
+          </div>
+          <div class="row padding-b-30"> <!-- candidate pic row -->
+            <div class="col-xs-12">
+              <img class="img-responsive center-block roundBorders-7" ng-src="{{vm.candidatePicUrl}}"
+              id="candidatePic"/>
+            </div>
+          </div>
+          <div class="row padding-b-30"> <!-- arrows row for mobile devies -->
+            <div class="col-xs-12 visible-xs">
+              <div class="row">
+                <div class="col-xs-4" ng-click="vm.getPreviousCandidate()">
+                  <img src="app/assets/svg/back.svg" class="arrowSize" alt="back">
+                </div>
+                <div class="col-xs-4"></div>
+                <div class="col-xs-4" ng-click="vm.getNextCandidate()">
+                  <img src="app/assets/svg/next.svg" class="arrowSize pull-right" alt="next">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row margin-t-50 hidden-xs"></div>
+          <div class="row">
+            <div class="col-xs-12">
+              <div id="gallery" class="row frameCenter">
+                <div class="frame clickable" ng-repeat="url in vm.pics" ng-click="vm.displayPic($index)">
+                  <img class="img-responsive roundBorders-7" ng-src="{{url}}">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="col-sm-2 col-md-4"></div>
+    <div class="col-md-4 col-sm-2 text-center hidden-xs fill center flex-start clickable shade"><!-- right arrow -->
+      <div class="col-xs-4 flex-start" ng-click="vm.getPreviousCandidate()">
+        <img src="app/assets/svg/next.svg" height="50px" alt="next">
+      </div>
+    </div>
   </div>
 </div>

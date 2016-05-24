@@ -10,27 +10,75 @@
     var vm = this;
     vm.candidateName;
     vm.candidatePicUrl;
-    var poolName;
-
-    $rootScope.poolName = poolName = "Instagram";
+    vm.getNextCandidate = getNextCandidate;
+    vm.getPreviousCandidate = getPreviousCandidate;
+    vm.pics = [];
+    vm.displayPic = displayPic;
+    var userMedia;
+    var frames = 4;
 
     init();
 
     function init() {
-      getCandidate();
+      getNextCandidate();
     }
 
-    function getCandidate(poolName) {
-      PoolService.getCandidateTokenFromServer(poolName).then(getCandidateDataFromInstagram)
+    function getNextCandidate() {
+      clearProfile();
+      getCandidateProfile();
+      getRecentMedia();
     }
 
-    function getCandidateDataFromInstagram(token) {
-      PoolService.getCandidateDataFromInstagram(token).then(displayUserData);
+    function getPreviousCandidate() {
+      clearProfile();
+      getCandidateProfile();
+      getRecentMedia();
+    }
+
+
+    function clearProfile() {
+     vm.pics.length = 0;
+     vm.candidateName = "";
+     vm.candidatePicUrl = "";
+    }
+
+    function getCandidateProfile() {
+      PoolService.getCandidateProfile()
+      .then(displayUserData);
+    }
+
+    function getRecentMedia() {
+      PoolService.getRecentMedia()
+      .then(extractMedia)
+      .then(displayPics);
+    }
+
+    function extractMedia(data) {
+      userMedia = data.data;
+      return this;
     }
 
     function displayUserData(data) {
       vm.candidateName = getUsername(data);
       vm.candidatePicUrl = getProfilePic(data);
+    }
+
+    function displayPics(data) {
+      getThumbsURLsfromData(userMedia);
+    }
+
+    function displayPic(index){
+      vm.candidatePicUrl = getPicUrl(userMedia, index);
+    }
+
+    function getPicUrl(userMedia, i) {
+      return userMedia.data[i].images.standard_resolution.url;
+    }
+
+    function getThumbsURLsfromData(userMedia) {
+      for (var i = 0; i < frames; i++) {
+        vm.pics.push(userMedia.data[i].images.thumbnail.url)
+      }
     }
 
     function getUsername(data) {
