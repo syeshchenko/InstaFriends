@@ -1,12 +1,14 @@
 <!doctype html>
 <html ng-app="app">
 <head>
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="/app/assets/css/style.css">
 </head>
 <title>InstaFriends</title>
-<body ui-view>
+<body>
+  <div id="menu"></div>
+  <div class="container-fluid fill padding-t-50" ui-view></div>
   <!-- vendors -->
   <script type="text/javascript" src="/node_modules/angular/angular.js"></script>
   <script type="text/javascript" src="/node_modules/angular-ui-router/release/angular-ui-router.js"></script>
@@ -21,9 +23,16 @@
   <script type="text/javascript" src="/app/login/login.module.js"></script>
   <script type="text/javascript" src="/app/login/login.controller.js"></script>
   <script type="text/javascript" src="/app/login/login.service.js"></script>
+  <!-- logout -->
+  <script type="text/javascript" src="/app/logout/logout.module.js"></script>
+  <script type="text/javascript" src="/app/logout/logout.controller.js"></script>
   <!-- main -->
   <script type="text/javascript" src="/app/main/main.module.js"></script>
   <script type="text/javascript" src="/app/main/main.controller.js"></script>
   <script type="text/javascript" src="/app/main/main.service.js"></script>
+  <!-- pool -->
+  <script type="text/javascript" src="/app/pool/pool.module.js"></script>
+  <script type="text/javascript" src="/app/pool/pool.controller.js"></script>
+  <script type="text/javascript" src="/app/pool/pool.service.js"></script>
 </body>
 </html>
