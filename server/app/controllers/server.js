@@ -24,7 +24,7 @@ function setup() {
       cert: cert
     };
   }
-  
+
   // determine port
   port = process.env.PORT || 5000;
 }
@@ -33,7 +33,7 @@ function start(app) {
   if (options) {
     return https.createServer(options, app);
   } else {
-    return http.createServer(app);
+   throw new Error("Unable to find ssl keys");
   }
 }
 
@@ -41,10 +41,7 @@ function create(app) {
   setup();
 
   start(app).listen(port, function() {
-    var address = "http://localhost";
-    if (options) {
-       address = "https://localhost";
-    }
+    address = "https://localhost";
     console.log('InstaFriends is running at ' + address + ':' + port);
   });
 

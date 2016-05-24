@@ -39,3 +39,4 @@ Thumbs.db
 # NPM
 /server/node_modules/*
 /client/node_modules/*
+/server/ssl/*
