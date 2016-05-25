@@ -18,10 +18,22 @@
       controller: 'LoginController',
       controllerAs: 'vm'
     })
+    .state('logout', {
+      url: '/logout',
+      templateUrl: '/app/logout/logout.html',
+      controller: 'LogoutController',
+      controllerAs: 'vm'
+    })
     .state('main', { // this state user enters when he is logged in
-      url: '/access_token=:accessToken',
+      url: '/profile',
       templateUrl: '/app/main/main.html',
       controller: 'MainController',
+      controllerAs: 'vm'
+    })
+    .state('pool', { // this state user enters when he is logged in
+      url: '/pool',
+      templateUrl: '/app/pool/pool.html',
+      controller: 'PoolController',
       controllerAs: 'vm'
     })
     .state('gate', { // this state is the entry point of the app
@@ -36,24 +48,24 @@
 
     if ($location.path() == '') $location.path(''); // checks if user enters / to redirect to /#/
 
-    $rootScope.$on( '$stateChangeStart', function(e, toState, toParams, // listener to state changes
-      fromState, fromParams) {
-
-      if (toState.name === "main") AuthService.setUserLoggedIn(); // temporary set user logged in
-
-        var isStateLogin = toState.name === "login";  /* checking if the user is redirected
-                       to login page after he was redirected to login page to avoid loop */
-        if(isStateLogin){
-          return; // no need to redirect
-        }
-
-        var isLoggedIn = AuthService.IsUserLoggedIn();
-
-        if (!isLoggedIn) {
-          e.preventDefault();
-          $state.go('login');
-        }
-      });
+    // $rootScope.$on( '$stateChangeStart', function(e, toState, toParams, // listener to state changes
+    //   fromState, fromParams) {
+    //
+    //   if (toState.name === "main") AuthService.setUserLoggedIn(); // temporary set user logged in
+    //
+    //     var isStateLogin = toState.name === "login";  /* checking if the user is redirected
+    //                    to login page after he was redirected to login page to avoid loop */
+    //     if(isStateLogin){
+    //       return; // no need to redirect
+    //     }
+    //
+    //     var isLoggedIn = AuthService.IsUserLoggedIn();
+    //
+    //     if (!isLoggedIn) {
+    //       e.preventDefault();
+    //       $state.go('login');
+    //     }
+    //   });
     }
 
   })();

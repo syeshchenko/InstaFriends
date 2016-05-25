@@ -23,7 +23,8 @@
     }
 
     function displayData(data) {
-      vm.response = 'Welcome, ' + data.data.data.username;
+      console.log(data);
+      //vm.response = 'Welcome, ' + data.data.data.username;
     }
 
     function getTokenFromUrl() {
