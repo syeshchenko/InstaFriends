@@ -1,14 +1,14 @@
-// get an instance of mongoose and mongoose.Schema
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+function User(params) {
+  populateUser(params);
+}
 
-// set up a mongoose model and pass it using module.exports
-module.exports = mongoose.model('User', new Schema({
-  instagram: {
-    id: String,
-    token: String,
-    name: String,
-    username: String,
-    profilePicture: String
-  }
-}));
+function populateUser(params) {
+  this.id = params.id;
+  this.username = params.username;
+  this.profilePicture = params.profilePicture;
+  this.socialMediaType = params.socialMediaType;
+  this.accesToken = params.accesToken;
+  this.isActive = params.isActive;
+}
+
+module.exports = User;
