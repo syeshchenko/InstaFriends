@@ -1,5 +1,6 @@
 var config = require('../../config');
 var User = require('../models/user');
+var UserDA = require('../data_access/user');
 
 function getUsers(req, res, next) {
   User.find({}, function(err, users) {
@@ -14,9 +15,9 @@ function getUsers(req, res, next) {
 
 function getOrCreateUser(token, refreshToken, profile, callback) {
   process.nextTick(function() {
-    User.findOne({
-      'instagram.id': profile.id
-    }, function(err, user) {
+
+    UserDA.findOne(profile.id,  function(err, user) {
+
       if (err) {
         return callback(err);
       }
@@ -24,21 +25,25 @@ function getOrCreateUser(token, refreshToken, profile, callback) {
       if (user) {
         return callback(null, user);
       } else {
-        var newUser = new User();
-        newUser.instagram.id = profile.id;
-        newUser.instagram.token = token;
-        newUser.instagram.name = profile.displayName; // look at the passport user profile to see how names are returned
-        newUser.instagram.username = profile.username;
-        newUser.instagram.profilePicture = profile._json.data.profile_picture;
 
-        newUser.save(function(err) {
+        var params = {
+          id: profile.id,
+          accesToken: token,
+          isActive: true,
+          username: profile.username,
+          profilePicture: profile._json.data.profile_picture,
+          socialMediaType: "instagram"
+        };
+
+        var newUser = new User(params);
+
+        UserDA.createUser(newUser, function(err) {
           if (err) {
             throw err;
           }
 
           return callback(null, newUser);
-        });
-
+        })
       }
     });
   });
