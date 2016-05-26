@@ -10,8 +10,9 @@ function setup(router, app, passport) {
 
   app.get('/auth/instagram/callback',
     passport.authenticate('instagram', {
-      successRedirect: '/#/profile',
-      failureRedirect: '/'
+      successRedirect: '/',
+      failureRedirect: '/login',
+      scope: 'relationships'
     }));
 
   // route for logging out
@@ -22,6 +23,8 @@ function setup(router, app, passport) {
 
   // API requests
   router.get('/users', authController.isLoggedIn, usersController.getUsers);
+
+  router.get('/isloggedin', authController.getIsLoggedIn);
 }
 
 module.exports.setup = setup;

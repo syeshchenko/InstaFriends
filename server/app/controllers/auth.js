@@ -15,5 +15,11 @@ function isLoggedIn(req, res, next) {
   res.status(401).send('missing authorization header');
 }
 
+function getIsLoggedIn(req, res, next) {
+  res.json({isLoggedIn: req.isAuthenticated()});
+}
+
+
 exports.logout = logout;
 exports.isLoggedIn = isLoggedIn;
+exports.getIsLoggedIn = getIsLoggedIn;
