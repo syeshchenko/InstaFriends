@@ -1,5 +1,6 @@
 html, body {
   height: 100%;
+  margin: 0;
 }
 
 body {
@@ -128,6 +129,17 @@ body {
   border-radius: 7px;
 }
 
+#exit {
+  width: 50px;
+  height: 100%;
+  background-color: grey;
+  float: right
+}
+
+.wide {
+  width: 100%;
+}
+
 @media (min-width: 767px) {
   .frame {
     width: 100px;
@@ -136,4 +148,4 @@ body {
 }
 
 @media (min-width: 992px) {}
-@media (min-width: 1200px) {}
+  @media (min-width: 1200px) {}
