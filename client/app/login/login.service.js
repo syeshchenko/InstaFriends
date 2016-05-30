@@ -2,24 +2,28 @@
   'use strict';
 
   angular.module('app.login')
-  .factory('AuthService', AuthService)
+  .factory('AuthService', AuthService);
+
+  AuthService.$inject = ['$http'];
 
 
-  function AuthService() {
-
-    var userLoggedIn = false;
+  function AuthService($http) {
 
     return {
-      IsUserLoggedIn: IsUserLoggedIn,
-      setUserLoggedIn: setUserLoggedIn
+      IsUserLoggedIn: IsUserLoggedIn
+    }
+
+    function setUserLoggedOut() {
+      return $http.get('/api/logout')
     }
 
     function IsUserLoggedIn() {
-      return userLoggedIn;
+      return $http.get('/api/isloggedin')
+      .then(extractAnswer)
     }
 
-    function setUserLoggedIn() {
-      userLoggedIn = true;
+    function extractAnswer(res) {
+      return res.data.isLoggedIn;
     }
 
   }
