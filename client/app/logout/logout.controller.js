@@ -1,23 +1,15 @@
 (function(){
   'use strict';
 
-  angular.module('app.logout')
+  angular.module('app.logout',[])
   .controller('LogoutController', LogoutController);
 
-  LogoutController.$inject = ['$http'];
+  LogoutController.$inject = ['$location', 'AuthService'];
 
-  function LogoutController($http) {
+  function LogoutController($location, AuthService) {
     var vm = this;
 
-    $.get('/api/logout', response);
-
-    function response(data) {
-      console.log('here');
-      if (data.state == 200) {
-        vm.message = 'BYE!';
-      } else {
-        vm.message = "ERROR";
-      }
-    }
+    AuthService.setUserLoggedOut();
+    $location.url('/login');
   }
 })();

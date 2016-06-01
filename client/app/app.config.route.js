@@ -3,14 +3,15 @@
 
   angular
   .module('app')
-  .config(['$stateProvider', Router])
+  .config(['$stateProvider', '$urlRouterProvider', Router])
   .run(RouteChecker);
 
-  Router.$inject = ['$stateProvider'];
+  RouteChecker.$inject = ['$location'];
 
-  RouteChecker.$inject = ['$rootScope', '$state', '$location', 'AuthService'];
+  function Router($stateProvider, $urlRouterProvider) {
 
-  function Router($stateProvider) {
+    $urlRouterProvider.otherwise("/"); // any unmatched url redirected to /
+
     $stateProvider
     .state('login', { // this state user enters when he is not logged in
       url: '/login',
@@ -24,10 +25,10 @@
       controller: 'LogoutController',
       controllerAs: 'vm'
     })
-    .state('main', { // this state user enters when he is logged in
+    .state('profile', { // this state user enters when he is logged in
       url: '/profile',
-      templateUrl: '/app/main/main.html',
-      controller: 'MainController',
+      templateUrl: '/app/profile/profile.html',
+      controller: 'ProfileController',
       controllerAs: 'vm'
     })
     .state('pool', { // this state user enters when he is logged in
@@ -38,34 +39,25 @@
     })
     .state('gate', { // this state is the entry point of the app
       url: '/',
-      templateUrl: '/app/main/main.html',
-      controller: 'MainController',
-      controllerAs: 'vm'
+      resolve: {
+        isLoggedIn: function($http, $state) {
+          return $http.get('/api/isloggedin')
+          .then(function(res){
+            if (res.data.isLoggedIn) $state.go('pool');
+            else $state.go('login');
+          })
+          .error(function(error) {
+            console.log("SERVER ERROR ", error);
+          });
+        }
+      }
     });
   }
 
-  function RouteChecker($rootScope, $state, $location, AuthService) {
+  function RouteChecker($location) {
 
-    if ($location.path() == '') $location.path(''); // checks if user enters / to redirect to /#/
+    if ($location.url() === '') $location.url(''); // checks if user enters / to redirect to /#/
 
-    // $rootScope.$on( '$stateChangeStart', function(e, toState, toParams, // listener to state changes
-    //   fromState, fromParams) {
-    //
-    //   if (toState.name === "main") AuthService.setUserLoggedIn(); // temporary set user logged in
-    //
-    //     var isStateLogin = toState.name === "login";  /* checking if the user is redirected
-    //                    to login page after he was redirected to login page to avoid loop */
-    //     if(isStateLogin){
-    //       return; // no need to redirect
-    //     }
-    //
-    //     var isLoggedIn = AuthService.IsUserLoggedIn();
-    //
-    //     if (!isLoggedIn) {
-    //       e.preventDefault();
-    //       $state.go('login');
-    //     }
-    //   });
     }
 
   })();

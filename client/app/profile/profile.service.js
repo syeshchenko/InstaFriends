@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  angular.module('app.main')
+  angular.module('app.profile')
   .factory('InfoService', InfoService);
 
   InfoService.$inject = ['$http', '$rootScope'];
@@ -13,7 +13,12 @@
     }
 
     function getProfileData() {
-      return $http.get('/users');
+      return $http.get('/api/users')
+      .then(extractUsername);
+    }
+
+    function extractUsername(data) {
+      return data.data[0].instagram.name;
     }
   }
 })();
