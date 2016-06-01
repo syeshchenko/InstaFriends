@@ -3,14 +3,15 @@
 
   angular
   .module('app')
-  .config(['$stateProvider', Router])
+  .config(['$stateProvider', '$urlRouterProvider', Router])
   .run(RouteChecker);
-
-  Router.$inject = ['$stateProvider'];
 
   RouteChecker.$inject = ['$rootScope', '$location', '$state'];
 
-  function Router($stateProvider) {
+  function Router($stateProvider, $urlRouterProvider) {
+
+    $urlRouterProvider.otherwise("/"); // any unmatched url redirected to /
+
     $stateProvider
     .state('login', { // this state user enters when he is not logged in
       url: '/login',
@@ -47,15 +48,15 @@
           })
           .error(function(error) {
             console.log("SERVER ERROR ", error);
-          })
+          });
         }
       }
-    })
+    });
   }
 
   function RouteChecker($rootScope, $location, $state, AuthService) {
 
-    if ($location.url() == '') $location.url(''); // checks if user enters / to redirect to /#/
+    if ($location.url() === '') $location.url(''); // checks if user enters / to redirect to /#/
 
     }
 
