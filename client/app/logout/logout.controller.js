@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  angular.module('app.logout')
+  angular.module('app.logout',[])
   .controller('LogoutController', LogoutController);
 
   LogoutController.$inject = ['$location', 'AuthService'];

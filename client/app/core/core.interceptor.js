@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  angular.module('app.core')
+  angular.module('app.core',['ui.router'])
   .factory('StatusCodeInterceptor', StatusCodeInterceptor);
 
   StatusCodeInterceptor.$inject = ['$q', '$location'];

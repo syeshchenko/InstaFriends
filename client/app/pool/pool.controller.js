@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  angular.module('app.pool')
+  angular.module('app.pool',[])
   .controller('PoolController', PoolController);
 
   PoolController.$inject = ['$rootScope','PoolService'];

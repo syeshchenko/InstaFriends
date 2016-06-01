@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  angular.module('app.profile')
+  angular.module('app.profile',[])
   .controller('ProfileController', ProfileController);
 
   ProfileController.$inject = ['$location', '$rootScope', 'InfoService'];
