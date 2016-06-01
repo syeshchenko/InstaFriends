@@ -6,7 +6,7 @@
   .config(['$stateProvider', '$urlRouterProvider', Router])
   .run(RouteChecker);
 
-  RouteChecker.$inject = ['$rootScope', '$location', '$state'];
+  RouteChecker.$inject = ['$location'];
 
   function Router($stateProvider, $urlRouterProvider) {
 
@@ -54,7 +54,7 @@
     });
   }
 
-  function RouteChecker($rootScope, $location, $state, AuthService) {
+  function RouteChecker($location) {
 
     if ($location.url() === '') $location.url(''); // checks if user enters / to redirect to /#/
 
