@@ -1,9 +1,10 @@
 var config = require('../../config');
 var User = require('../models/user');
 var UserDA = require('../data_access/user');
+var mediaTypeMapper = require('../models/media_type_mapper');
 
 function getUsers(req, res, next) {
-  User.find({}, function(err, users) {
+  UserDA.getAllUsers(function(err, users) {
 
     if (err) {
       return next(err);
@@ -16,41 +17,51 @@ function getUsers(req, res, next) {
 function getOrCreateUser(token, refreshToken, profile, callback) {
   process.nextTick(function() {
 
-    UserDA.findOne(profile.id,  function(err, user) {
+    var params = {
+      socialId: profile.id,
+      socialMediaType: mediaTypeMapper.instagram
+    };
+
+    UserDA.findUserBySocialId(params, function(err, user) {
 
       if (err) {
-        return callback(err);
+        throw err;
       }
 
       if (user) {
         return callback(null, user);
       } else {
 
-        var params = {
-          id: profile.id,
-          accesToken: token,
-          isActive: true,
-          username: profile.username,
-          profilePicture: profile._json.data.profile_picture,
-          socialMediaType: "instagram"
-        };
+        UserDA.createAccount(function(account) {
 
-        var newUser = new User(params);
+          var params = {
+            socialId: profile.id,
+            userName: profile.username,
+            profilePicture: profile._json.data.profile_picture,
+            socialMediaType: mediaTypeMapper.instagram,
+            accessToken: token,
+            isActive: true,
+            accountId: account.insertId
+          };
 
-        UserDA.createUser(newUser, function(err) {
-          if (err) {
-            throw err;
-          }
+          var newUser = new User(params);
 
-          return callback(null, newUser);
-        })
+          UserDA.createUser(newUser, function(err, createdUser) {
+            if (err) {
+              throw err;
+            }
+            return callback(null, createdUser);
+          });
+        });
       }
     });
   });
 }
 
 function getUserProfile(req, res, next) {
-  res.json({user: req.user});
+  res.json({
+    user: req.user
+  });
 }
 
 exports.getUserProfile = getUserProfile;

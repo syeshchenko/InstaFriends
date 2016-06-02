@@ -8,10 +8,10 @@ module.exports = {
         'callbackURL'   : 'https://localhost:5000/auth/instagram/callback'
       }
     },
-    'mysql' {
+    'mysql': {
       'host': '127.0.0.1',
       'user': 'root',
       'password': 'admin',
-      'database': 'instafrieds'
+      'database': 'instafriends'
     }
 };

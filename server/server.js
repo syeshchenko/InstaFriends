@@ -2,7 +2,6 @@ var express    = require('express');
 var app        = express();
 var bodyParser = require('body-parser');
 var morgan     = require('morgan');
-var mongoose   = require('mongoose');
 var passport   = require('passport');
 var session    = require('express-session');
 var flash      = require('connect-flash');
@@ -12,14 +11,10 @@ var route              = require('./routes');
 var passportController = require('./app/controllers/passport');
 var serverConroller    = require('./app/controllers/server');
 
-
 // pass passport for configuration
 passportController.initialize(passport);
 
 var apiRoutes = express.Router();
-
-// connect to db
-mongoose.connect(config.dbConnection);
 
 // setup bodyParser middleware so we can get variables passed with request
 app.use(bodyParser.urlencoded({
@@ -38,10 +33,6 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 
 // serve static files
 app.use(express.static("../client/"));
-// TODO: Investigate if we need to explicitly specify index.html or if it's served automatically
-// app.get('/', function(req, res) {
-//   res.render('index.html');
-// });
 
 // set up routes
 route.setup(apiRoutes, app, passport);
