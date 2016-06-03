@@ -3,16 +3,21 @@ var InstagramStrategy = require('passport-instagram').Strategy;
 
 var config = require('../../config');
 var usersController = require('./users');
-var User = require('../models/user');
+var UserDA = require('../data_access/user');
+var mediaTypeMapper = require('../models/media_type_mapper');
 
 function initialize(passport) {
 
   passport.serializeUser(function(user, callback) {
-    callback(null, user.id);
+    callback(null, user.social_id);
   });
 
-  passport.deserializeUser(function(userId, callback) {
-    User.findById(userId, function(err, user) {
+  passport.deserializeUser(function(userSocialId, callback) {
+    var params = {
+      socialId: userSocialId,
+      socialMediaType: mediaTypeMapper.instagram
+    };
+    UserDA.findUserBySocialId(params, function(err, user) {
       callback(err, user);
     });
   });

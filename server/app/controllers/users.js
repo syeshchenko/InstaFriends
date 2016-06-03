@@ -1,8 +1,10 @@
 var config = require('../../config');
 var User = require('../models/user');
+var UserDA = require('../data_access/user');
+var mediaTypeMapper = require('../models/media_type_mapper');
 
 function getUsers(req, res, next) {
-  User.find({}, function(err, users) {
+  UserDA.getAllUsers(function(err, users) {
 
     if (err) {
       return next(err);
@@ -14,38 +16,52 @@ function getUsers(req, res, next) {
 
 function getOrCreateUser(token, refreshToken, profile, callback) {
   process.nextTick(function() {
-    User.findOne({
-      'instagram.id': profile.id
-    }, function(err, user) {
+
+    var params = {
+      socialId: profile.id,
+      socialMediaType: mediaTypeMapper.instagram
+    };
+
+    UserDA.findUserBySocialId(params, function(err, user) {
+
       if (err) {
-        return callback(err);
+        throw err;
       }
 
       if (user) {
         return callback(null, user);
       } else {
-        var newUser = new User();
-        newUser.instagram.id = profile.id;
-        newUser.instagram.token = token;
-        newUser.instagram.name = profile.displayName; // look at the passport user profile to see how names are returned
-        newUser.instagram.username = profile.username;
-        newUser.instagram.profilePicture = profile._json.data.profile_picture;
 
-        newUser.save(function(err) {
-          if (err) {
-            throw err;
-          }
+        UserDA.createAccount(function(account) {
 
-          return callback(null, newUser);
+          var params = {
+            socialId: profile.id,
+            userName: profile.username,
+            profilePicture: profile._json.data.profile_picture,
+            socialMediaType: mediaTypeMapper.instagram,
+            accessToken: token,
+            isActive: true,
+            accountId: account.insertId
+          };
+
+          var newUser = new User(params);
+
+          UserDA.createUser(newUser, function(err, createdUser) {
+            if (err) {
+              throw err;
+            }
+            return callback(null, createdUser);
+          });
         });
-
       }
     });
   });
 }
 
 function getUserProfile(req, res, next) {
-  res.json({user: req.user});
+  res.json({
+    user: req.user
+  });
 }
 
 exports.getUserProfile = getUserProfile;
