@@ -1,6 +1,7 @@
 var express = require('express');
 var usersController = require('./app/controllers/users');
 var authController = require('./app/controllers/auth');
+var poolController = require('./app/controllers/pool');
 
 function setup(router, app, passport) {
 
@@ -25,6 +26,8 @@ function setup(router, app, passport) {
   router.get('/users', authController.isLoggedIn, usersController.getUsers);
 
   router.get('/isloggedin', authController.getIsLoggedIn);
+
+  router.get('/nextCandidate', authController.isLoggedIn, poolController.getNextCandidate);
 }
 
 module.exports.setup = setup;

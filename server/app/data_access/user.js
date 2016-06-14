@@ -1,13 +1,4 @@
-var mysql = require('mysql');
-var config = require('../../config');
-
-var pool = mysql.createPool({
-  connectionLimit: 10,
-  host: config.mysql.host,
-  user: config.mysql.user,
-  password: config.mysql.password,
-  database: config.mysql.database
-});
+var pool = require('./connection_pool').Pool;
 
 function findUserById(params, callback) {
 
