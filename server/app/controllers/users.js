@@ -35,13 +35,13 @@ function getOrCreateUser(token, refreshToken, profile, callback) {
         UserDA.createAccount(function(account) {
 
           var params = {
-            socialId: profile.id,
-            userName: profile.username,
-            profilePicture: profile._json.data.profile_picture,
-            socialMediaType: mediaTypeMapper.instagram,
-            accessToken: token,
-            isActive: true,
-            accountId: account.insertId
+            social_id: profile.id,
+            user_name: profile.username,
+            profile_picture: profile._json.data.profile_picture,
+            social_media_type_id: mediaTypeMapper.instagram,
+            access_token: token,
+            is_active: true,
+            account_id: account.insertId
           };
 
           var newUser = new User(params);
