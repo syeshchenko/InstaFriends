@@ -7,10 +7,10 @@ function getUsers(req, res, next) {
   UserDA.getAllUsers(function(err, users) {
 
     if (err) {
-      return next(err);
+      res.status(400).send(err);
+    } else {
+      res.json(users);
     }
-
-    res.json(users);
   });
 }
 
@@ -25,7 +25,7 @@ function getOrCreateUser(token, refreshToken, profile, callback) {
     UserDA.findUserBySocialId(params, function(err, user) {
 
       if (err) {
-        throw err;
+        callback(err);
       }
 
       if (user) {
@@ -48,7 +48,7 @@ function getOrCreateUser(token, refreshToken, profile, callback) {
 
           UserDA.createUser(newUser, function(err, createdUser) {
             if (err) {
-              throw err;
+              callback(err);
             }
             return callback(null, createdUser);
           });
