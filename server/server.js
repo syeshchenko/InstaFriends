@@ -38,13 +38,6 @@ app.use(express.static("../client/"));
 route.setup(apiRoutes, app, passport);
 app.use('/api', apiRoutes);
 
-// error handling middleware
-app.use(function(err, req, res, next) {
-  console.log('error caught: ', err.stack);
-  res.status(err.status || 500);
-  res.json({'error': err.message});
-});
-
 // start http/https server
 serverConroller.create(app);
 

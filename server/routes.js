@@ -18,16 +18,14 @@ function setup(router, app, passport) {
 
   // route for logging out
   router.get('/logout', authController.logout);
-
   // add isLoggedIn middleware
   router.get('/profile', authController.isLoggedIn, usersController.getUserProfile);
-
   // API requests
   router.get('/users', authController.isLoggedIn, usersController.getUsers);
-
   router.get('/isloggedin', authController.getIsLoggedIn);
-
   router.get('/nextCandidate', authController.isLoggedIn, poolController.getNextCandidate);
+
+  router.post('/refuseCandidate', authController.isLoggedIn, poolController.refuseCandidate)
 }
 
 module.exports.setup = setup;
