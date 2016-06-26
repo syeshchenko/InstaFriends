@@ -9,5 +9,4 @@ var Pool = mysql.createPool({
   database: config.mysql.database
 });
 
-
 exports.Pool = Pool;
