@@ -7,7 +7,7 @@ var session    = require('express-session');
 var flash      = require('connect-flash');
 
 var config             = require('./config');
-var route              = require('./routes');
+var router              = require('./routes');
 var passportController = require('./app/controllers/passport');
 var serverConroller    = require('./app/controllers/server');
 
@@ -35,7 +35,7 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 app.use(express.static("../client/"));
 
 // set up routes
-route.setup(apiRoutes, app, passport);
+router.setup(apiRoutes, app, passport);
 app.use('/api', apiRoutes);
 
 // start http/https server
