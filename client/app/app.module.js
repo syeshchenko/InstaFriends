@@ -3,6 +3,7 @@
 
   angular.module('app',[
     'app.core',
+    'app.toolbar',
     'app.login',
     'app.logout',
     'app.pool',
