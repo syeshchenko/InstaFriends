@@ -4,53 +4,50 @@ var UserDA = require('../data_access/user');
 var mediaTypeMapper = require('../models/media_type_mapper');
 
 function getUsers(req, res, next) {
-  UserDA.getAllUsers(function(err, users) {
+  UserDA.getAllUsers(function (err, users) {
 
     if (err) {
-      return next(err);
+      res.status(400).send(err);
+    } else {
+      res.json(users);
     }
-
-    res.json(users);
   });
 }
 
 function getOrCreateUser(token, refreshToken, profile, callback) {
-  process.nextTick(function() {
+  process.nextTick(function () {
 
     var params = {
       socialId: profile.id,
       socialMediaType: mediaTypeMapper.instagram
     };
 
-    UserDA.findUserBySocialId(params, function(err, user) {
-
-      if (err) {
-        throw err;
-      }
+    UserDA.findUserBySocialId(params, function (err, user) {
 
       if (user) {
-        return callback(null, user);
+        callback(null, user);
       } else {
 
-        UserDA.createAccount(function(account) {
+        UserDA.createAccount(function (account) {
 
           var params = {
-            socialId: profile.id,
-            userName: profile.username,
-            profilePicture: profile._json.data.profile_picture,
-            socialMediaType: mediaTypeMapper.instagram,
-            accessToken: token,
-            isActive: true,
-            accountId: account.insertId
+            social_id: profile.id,
+            user_name: profile.username,
+            profile_picture: profile._json.data.profile_picture,
+            social_media_type_id: mediaTypeMapper.instagram,
+            access_token: token,
+            is_active: true,
+            account_id: account.insertId
           };
 
           var newUser = new User(params);
 
-          UserDA.createUser(newUser, function(err, createdUser) {
+          UserDA.createUser(newUser, function (err, createdUser) {
             if (err) {
-              throw err;
+              callback(err);
+            } else {
+              callback(null, createdUser);
             }
-            return callback(null, createdUser);
           });
         });
       }
