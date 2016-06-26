@@ -3,10 +3,13 @@
 
   angular
   .module('app')
-  .config(['$stateProvider', '$urlRouterProvider', Router])
-  .run(RouteChecker);
+  .config(Router)
+  .run(stateChecker)
+  .run(routeChecker);
 
-  RouteChecker.$inject = ['$location'];
+  routeChecker.$inject = ['$location'];
+  stateChecker.$inject = ['$rootScope', 'AuthService', '$state'];
+  Router.$inject = ['$stateProvider', '$urlRouterProvider'];
 
   function Router($stateProvider, $urlRouterProvider) {
 
@@ -17,12 +20,6 @@
       url: '/login',
       templateUrl: '/app/login/login.html',
       controller: 'LoginController',
-      controllerAs: 'vm'
-    })
-    .state('logout', {
-      url: '/logout',
-      templateUrl: '/app/logout/logout.html',
-      controller: 'LogoutController',
       controllerAs: 'vm'
     })
     .state('profile', { // this state user enters when he is logged in
@@ -36,28 +33,26 @@
       templateUrl: '/app/pool/pool.html',
       controller: 'PoolController',
       controllerAs: 'vm'
-    })
-    .state('gate', { // this state is the entry point of the app
-      url: '/',
-      resolve: {
-        isLoggedIn: function($http, $state) {
-          return $http.get('/api/isloggedin')
-          .then(function(res){
-            if (res.data.isLoggedIn) $state.go('pool');
-            else $state.go('login');
-          })
-          .error(function(error) {
-            console.log("SERVER ERROR ", error);
-          });
-        }
+    });
+  }
+
+  function routeChecker($location) {
+
+    // redirects from root to pool
+    if ($location.url() === '/' || $location.url() === '') $location.url('/pool');
+
+  }
+
+  function stateChecker($rootScope, AuthService, $state) {
+
+    $rootScope.$on('$stateChangeStart',
+    function(event, toState, toParams, fromState, fromParams, options){
+
+      if (!AuthService.isLoggedIn()) {
+        event.preventDefault();
+        $state.go('login');
       }
     });
   }
 
-  function RouteChecker($location) {
-
-    if ($location.url() === '') $location.url(''); // checks if user enters / to redirect to /#/
-
-    }
-
-  })();
+})();
