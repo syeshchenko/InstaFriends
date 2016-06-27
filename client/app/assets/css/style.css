@@ -3,7 +3,8 @@ html, body {
   margin: 0; }
 
 body {
-  background-color: #ffffff; }
+  background-color: #FAFAFA;
+  color: #262626; }
 
 .fill {
   height: 100%; }
@@ -87,7 +88,7 @@ body {
   top: -200px;
   position: fixed;
   z-index: 200;
-  background-color: #000000;
+  background-color: #262626;
   width: 100%;
   height: 250px;
   transition: transform 0.3s; }
@@ -108,7 +109,8 @@ body {
 #logoutButton {
   height: 100%;
   width: 50px;
-  padding-top: 5px; }
+  padding-top: 10px;
+  padding-left: 10px; }
 
 #profilePhoto {
   width: 50px;
