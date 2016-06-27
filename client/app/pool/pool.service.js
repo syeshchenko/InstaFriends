@@ -29,7 +29,7 @@
     }
 
     function extractToken(data) { // temporary
-      return data.data[0].instagram.token;
+      return data.data[0].access_token;
     }
 
     function getCandidateProfileClientSide(token) {
