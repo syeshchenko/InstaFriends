@@ -8,8 +8,8 @@
 
   function PoolController($rootScope, PoolService) {
     var vm = this;
-    vm.candidateName;
-    vm.candidatePicUrl;
+    vm.candidateName='';
+    vm.candidatePicUrl='';
     vm.getNextCandidate = getNextCandidate;
     vm.getPreviousCandidate = getPreviousCandidate;
     vm.pics = [];
@@ -60,7 +60,7 @@
 
     function displayUserData(data) {
       vm.candidateName = getUsername(data);
-      vm.candidatePicUrl = getProfilePic(data);
+      $rootScope.candidatePicUrl = getProfilePic(data);
     }
 
     function displayPics(data) {
