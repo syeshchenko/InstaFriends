@@ -4,8 +4,8 @@
   angular
   .module('app')
   .config(Router)
-  .run(stateChecker)
-  .run(routeChecker);
+  .run(routeChecker)
+  .run(stateChecker);
 
   routeChecker.$inject = ['$location'];
   stateChecker.$inject = ['$rootScope', 'AuthService', '$state'];
@@ -22,14 +22,8 @@
       controller: 'LoginController',
       controllerAs: 'vm'
     })
-    .state('profile', { // this state user enters when he is logged in
-      url: '/profile',
-      templateUrl: '/app/profile/profile.html',
-      controller: 'ProfileController',
-      controllerAs: 'vm'
-    })
     .state('pool', { // this state user enters when he is logged in
-      url: '/pool',
+      url: '/',
       templateUrl: '/app/pool/pool.html',
       controller: 'PoolController',
       controllerAs: 'vm'
@@ -37,10 +31,8 @@
   }
 
   function routeChecker($location) {
-
-    // redirects from root to pool
-    if ($location.url() === '/' || $location.url() === '') $location.url('/pool');
-
+    // redirects from / to /#/
+    if ($location.url() === '/') $location.url('/');
   }
 
   function stateChecker($rootScope, AuthService, $state) {
@@ -48,11 +40,14 @@
     $rootScope.$on('$stateChangeStart',
     function(event, toState, toParams, fromState, fromParams, options){
 
-      if (!AuthService.isLoggedIn()) {
-        event.preventDefault();
-        $state.go('login');
-      }
+      AuthService.isLoggedIn().
+      then(function(loggedIn){
+        if (loggedIn === false) {
+          event.preventDefault();
+          $state.go('login');
+        }
+      });
+
     });
   }
-
 })();
