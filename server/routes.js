@@ -6,14 +6,12 @@ var poolController = require('./app/controllers/pool');
 function setup(router, app, passport) {
 
   // auth requests
-  app.get('/auth/instagram', passport.authenticate('instagram', {
-  }));
+  app.get('/auth/instagram', passport.authenticate('instagram', { scope: 'relationships' }));
 
   app.get('/auth/instagram/callback',
     passport.authenticate('instagram', {
       successRedirect: '/',
-      failureRedirect: '/login',
-      scope: 'relationships'
+      failureRedirect: '/login'
     }));
 
   // route for logging out
@@ -25,7 +23,8 @@ function setup(router, app, passport) {
   router.get('/isloggedin', authController.getIsLoggedIn);
   router.get('/nextCandidate', authController.isLoggedIn, poolController.getNextCandidate);
 
-  router.post('/refuseCandidate', authController.isLoggedIn, poolController.refuseCandidate)
+  router.post('/refuseCandidate', authController.isLoggedIn, poolController.refuseCandidate);
+  router.post('/approveCandidate', authController.isLoggedIn, poolController.approveCandidate)
 }
 
 module.exports.setup = setup;
