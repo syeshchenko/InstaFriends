@@ -56,6 +56,7 @@ function approveCandidate(req, res, next) {
     approvedUserId: approvedUserId
   };
 
+  // approve user you just got from getNextCandidate
   PoolDA.approveCandidate(params, function (err, success) {
     if (err) {
       console.log('error: ', err);
@@ -67,21 +68,26 @@ function approveCandidate(req, res, next) {
         shownUsersId: user.id
       };
 
-      // check is users followed each other
+      // check is user you just approved - already approved you before
       PoolDA.getIsFollowed(userMatchParams, function (err, success) {
         if (err) {
+          // nope, first relationship was created, and that's it for now
           if (err.message && err.message.indexOf('Relationship does not exist') > -1) {
-            res.status(201).send('created first relationship: ' + success);
+            res.status(201).send('created first relationship');
           } else {
-            console.log('error: ', err);
+            // something went wrong, we couldn't even create first relationship
+            console.log('Unable to create first relationship: ', err);
             res.status(400).send(err);
           }
 
         } else {
+
           var params = {
             id: approvedUserId,
             socialMediaType: mediaTypeMapper.instagram
           };
+
+          // users have follow relationship with each other, going to actually create it on Instagram
 
           // get access token of the second user
           UserDA.findUserById(params, function (err, secondUser) {
@@ -89,11 +95,15 @@ function approveCandidate(req, res, next) {
               console.log('err: ', err);
               res.status(400).send('Unable to get second user by id: ' + err);
             } else {
+
+              var secondUserObject = new User(secondUser);
+
               var firstFollowParams = {
                 followerAccessToken: user.accessToken,
-                userIdToFollow: secondUser.social_id
+                userIdToFollow: secondUserObject.socialId
               };
 
+              // current user to IG follow user they just 'followed' in our app
               createFollowRelationship(firstFollowParams, function (err, callback) {
                 if (err) {
                   console.log('err: ', err);
@@ -101,19 +111,21 @@ function approveCandidate(req, res, next) {
                 } else {
 
                   var secondFollowParams = {
-                    followerAccessToken: secondUser.accessToken,
+                    followerAccessToken: secondUserObject.accessToken,
                     userIdToFollow: user.socialId
                   };
 
-                  // create second relationship
+                  // create second relationship, the second user to IG follow current user
                   createFollowRelationship(secondFollowParams, function (err, result) {
                     if (err) {
                       console.log('err: ', err);
                       res.status(400).send('Unable to create second relationship between users: ' + err);
                     } else {
+                      // everything worked out
                       res.status(201).send('Users followed each other');
                     }
                   });
+
                 }
               });
             }
@@ -129,20 +141,25 @@ function createFollowRelationship(params, callback) {
   igFollowApiUri = igFollowApiUri.replace('USER-ID', params.userIdToFollow);
   igFollowApiUri = igFollowApiUri.replace('ACCESS-TOKEN', params.followerAccessToken);
 
-  var data = {
-    action: 'follow'
-  };
-
-  request.post(igFollowApiUri, data, function (err, response, body) {
+  request.post({
+    url: igFollowApiUri, //URL to hit
+    method: 'POST',
+    form: {
+      action: 'follow'
+    }
+  }, function (err, response, body) {
     if (err) {
       callback(err);
     } else {
-      console.log('response: ', response);
-      console.log('body: ', body);
-      if (body && body.meta & body.meta.error_message) {
-        callback({ message: body.meta.error_message });
+
+      var res = JSON.parse(body);
+
+      if (res && res.meta && res.meta.error_message) {
+        callback({ message: resres.meta.error_message });
+      } else if (res && res.meta && res.meta.code == 200) {
+        callback(null, { status: 'success' });
       } else {
-        callback();
+        callback(null, { status: 'failed' });
       }
     }
   });
