@@ -3,10 +3,13 @@
 
   angular
   .module('app')
-  .config(['$stateProvider', '$urlRouterProvider', Router])
-  .run(RouteChecker);
+  .config(Router)
+  .run(routeChecker)
+  .run(stateChecker);
 
-  RouteChecker.$inject = ['$location'];
+  routeChecker.$inject = ['$location'];
+  stateChecker.$inject = ['$rootScope', 'AuthService', '$state'];
+  Router.$inject = ['$stateProvider', '$urlRouterProvider'];
 
   function Router($stateProvider, $urlRouterProvider) {
 
@@ -19,45 +22,32 @@
       controller: 'LoginController',
       controllerAs: 'vm'
     })
-    .state('logout', {
-      url: '/logout',
-      templateUrl: '/app/logout/logout.html',
-      controller: 'LogoutController',
-      controllerAs: 'vm'
-    })
-    .state('profile', { // this state user enters when he is logged in
-      url: '/profile',
-      templateUrl: '/app/profile/profile.html',
-      controller: 'ProfileController',
-      controllerAs: 'vm'
-    })
     .state('pool', { // this state user enters when he is logged in
-      url: '/pool',
+      url: '/',
       templateUrl: '/app/pool/pool.html',
       controller: 'PoolController',
       controllerAs: 'vm'
-    })
-    .state('gate', { // this state is the entry point of the app
-      url: '/',
-      resolve: {
-        isLoggedIn: function($http, $state) {
-          return $http.get('/api/isloggedin')
-          .then(function(res){
-            if (res.data.isLoggedIn) $state.go('pool');
-            else $state.go('login');
-          })
-          .error(function(error) {
-            console.log("SERVER ERROR ", error);
-          });
-        }
-      }
     });
   }
 
-  function RouteChecker($location) {
+  function routeChecker($location) {
+    // redirects from / to /#/
+    if ($location.url() === '/') $location.url('/');
+  }
 
-    if ($location.url() === '') $location.url(''); // checks if user enters / to redirect to /#/
+  function stateChecker($rootScope, AuthService, $state) {
 
-    }
+    $rootScope.$on('$stateChangeStart',
+    function(event, toState, toParams, fromState, fromParams, options){
 
-  })();
+      AuthService.isLoggedIn().
+      then(function(loggedIn){
+        if (loggedIn === false) {
+          event.preventDefault();
+          $state.go('login');
+        }
+      });
+
+    });
+  }
+})();

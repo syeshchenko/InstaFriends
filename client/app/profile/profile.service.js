@@ -10,7 +10,7 @@
 
     return {
       getProfileData: getProfileData
-    }
+    };
 
     function getProfileData() {
       return $http.get('/api/users')
@@ -18,7 +18,7 @@
     }
 
     function extractUsername(data) {
-      return data.data[0].instagram.name;
+      return data.data[0].user_name;
     }
   }
 })();

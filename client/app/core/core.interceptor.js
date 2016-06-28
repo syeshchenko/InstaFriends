@@ -10,7 +10,7 @@
     return {
       response: response,
       responseError: responseError
-    }
+    };
 
     function response(res) {
       return res;

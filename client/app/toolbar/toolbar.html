@@ -1,0 +1,15 @@
+<nav class="toolbar clickable"
+ng-click="vm.toggleToolbar()"
+ng-class="{ active: vm.isOpen }"
+ng-show="isLoggedIn">
+<div id="profile"></div>
+<div id="actionButtons">
+<div id="profilePhoto">
+<img class="img-responsive roundBorders-7" ng-src="{{candidatePicUrl}}">
+</div>
+<div id="pulldownButton"></div>
+<div id="logoutButton" ng-click="vm.logout()">
+<img src="app/assets/svg/logout.svg" height="30px" alt="logout">
+</div>
+</div>
+</nav>
