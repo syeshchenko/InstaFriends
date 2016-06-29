@@ -6,7 +6,7 @@ var poolController = require('./app/controllers/pool');
 function setup(router, app, passport) {
 
   // auth requests
-  app.get('/auth/instagram', passport.authenticate('instagram', { scope: 'relationships' }));
+  app.get('/auth/instagram', passport.authenticate('instagram', { scope: ['relationships', 'public_content'] }));
 
   app.get('/auth/instagram/callback',
     passport.authenticate('instagram', {
