@@ -14,11 +14,59 @@ function getNextCandidate(req, res, next) {
     if (err) {
       res.status(400).send(err);
     } else {
-      res.status(200).json(poolUser);
+
+      var nextUser = new User(poolUser);
+
+      var userMediaParams = {
+        userId: nextUser.socialId,
+        userAccessToken: nextUser.accessToken
+      };
+
+      getUserMedia(userMediaParams, function (err, userMedia) {
+        if (err) {
+          res.status(400).send(err);
+        } else {
+          var responseUser = {
+            userName: nextUser.userName,
+            profilePicture: nextUser.profilePicture,
+            socialId: nextUser.socialId,
+            socialMediaType: nextUser.socialMediaType,
+            isActive: nextUser.isActive,
+            userMedia: userMedia
+          };
+
+          res.status(200).json(responseUser);
+        }
+      });
     }
 
   });
 
+}
+
+function getUserMedia(params, callback) {
+  var igUserMediaApiUri = 'https://api.instagram.com/v1/users/USER-ID/media/recent/?access_token=ACCESS-TOKEN';
+  igUserMediaApiUri = igUserMediaApiUri.replace('USER-ID', params.userId);
+  igUserMediaApiUri = igUserMediaApiUri.replace('ACCESS-TOKEN', params.userAccessToken);
+
+  request(igUserMediaApiUri, function (err, response, body) {
+    if (err) {
+      callback(err);
+    } else {
+
+      var res = null;
+      try {
+        var res = JSON.parse(body);
+      } catch (ex) { }
+
+      if (!res || !res.data) {
+        callback({ status: 'failed' });
+      } else {
+        callback(null, res.data);
+      }
+
+    }
+  });
 }
 
 function refuseCandidate(req, res, next) {
