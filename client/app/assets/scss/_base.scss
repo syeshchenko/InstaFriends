@@ -2,7 +2,6 @@ $blackColor: #262626;
 $whiteColor: #FAFAFA;
 
 html, body {
-  height: 100%;
   margin: 0;
 }
 
@@ -13,6 +12,7 @@ body {
 
 .fill {
   height: 100%;
+  width: 100%;
 }
 
 .wrapper {
