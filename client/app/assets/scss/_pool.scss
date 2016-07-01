@@ -1,25 +1,114 @@
-.frame {
-  width: 70px;
-  height: 70px;
-  margin: 2px;
+.mainFrame {
+  width: 100%;
+  min-height: calc(100% - 50px);
+  background-color: #FAFAFA;
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.frameCenter {
-  display: flex;
-  justify-content: center;
+#candidateName, #candidatePic, #controls, #pics {
+  width: 80%;
 }
 
 #candidateName {
-  font-size: 3em;
+  height: 50px;
+  font-size: 2em;
   font-weight: lighter;
-  height: 50px; }
+  text-align: center;
+}
 
-@media (min-width: 767px) {
-  .frame {
+#candidatePic {
+  height: auto;
+  background-color: #444444;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+#controls {
+  margin-top: 20px;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.control {
+  width: 80px;
+  height: 80px;
+  // border: 1px solid;
+  border-radius: 7px;
+  // border-color: $blackColor;
+  // background-color: #111111;
+  cursor: pointer;
+}
+.control:hover {
+  background-color: #CCCCCC;
+}
+
+.icon {
+  position: relative;
+  height: 70%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+}
+
+#pics {
+  margin-top: 20px;
+  height: 80px;
+  /*background-color: #444444;*/
+  display: flex;
+  justify-content: space-between;
+}
+
+.pic {
+  width: 80px;
+  height: 80px;
+  background-color: #444444;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.responsiveImg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+
+@media (min-width: 767px) {}
+@media (min-width: 992px) {}
+@media (min-width: 1200px) {
+  #candidateName, #candidatePic, #controls, #pics {
+    width: 30%;
+  }
+}
+@media (min-width: 1610px) {
+  #candidateName, #candidatePic, #controls, #pics {
+    width: 25%;
+  }
+  #controls, .control {
+    height: 100px;
+  }
+
+  .control {
+    width: 100px;
+  }
+
+  #candidateName {
+    height: 70px;
+    margin-top: 20px;
+    font-size: 3em;
+  }
+
+  .pic {
     width: 100px;
     height: 100px;
   }
-}
 
-@media (min-width: 992px) {}
-@media (min-width: 1200px) {}
+  #pics {
+    height: 100px;
+  }
+
+}
