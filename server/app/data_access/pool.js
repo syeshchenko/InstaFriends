@@ -8,7 +8,7 @@ function getNextCandidate(user, callback) {
       callback(err);
     } else {
       var getNextCandidateQuery = 'SELECT ' +
-        'user.id, user.user_name, user.profile_picture, user.is_active, user.social_media_type_id ' +
+        '* ' +
         'FROM ' +
         'users AS user ' +
         'WHERE ' +
