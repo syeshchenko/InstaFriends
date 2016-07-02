@@ -2,18 +2,16 @@
 <html ng-app="app">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="/app/assets/css/style.css">
 </head>
 <title>InstaFriends</title>
 <body>
-<toolbar></toolbar>
-  <div class="container-fluid fill padding-t-50" ui-view></div>
+  <toolbar></toolbar>
+  <div class="wrapper" ui-view></div>
   <!-- vendors -->
   <script type="text/javascript" src="/node_modules/angular/angular.js"></script>
   <script type="text/javascript" src="/node_modules/angular-ui-router/release/angular-ui-router.js"></script>
   <script type="text/javascript" src="/node_modules/jquery/dist/jquery.js"></script>
-  <script type="text/javascript" src="/node_modules/bootstrap/dist/js/bootstrap.js"></script>
   <!-- app -->
   <script type="text/javascript" src="/app/app.module.js"></script>
   <script type="text/javascript" src="/app/app.config.route.js"></script>
@@ -28,6 +26,7 @@
   <!-- toolbar -->
   <script type="text/javascript" src="/app/toolbar/toolbar.controller.js"></script>
   <script type="text/javascript" src="/app/toolbar/toolbar.directive.js"></script>
+  <script type="text/javascript" src="/app/toolbar/toolbar.service.js"></script>
   <!-- pool -->
   <script type="text/javascript" src="/app/pool/pool.controller.js"></script>
   <script type="text/javascript" src="/app/pool/pool.service.js"></script>
