@@ -9,35 +9,44 @@ function getNextCandidate(req, res, next) {
 
   var user = new User(req.user);
 
-  PoolDA.getNextCandidate(user, function (err, poolUser) {
+  PoolDA.getNextCandidate(user, function (err, result) {
 
     if (err) {
       res.status(400).send(err);
     } else {
 
-      var nextUser = new User(poolUser);
+      if (!result.length) {
+        // if no next candidate - return user with id == -1
+        var responseUser = {
+          id: -1
+        };
+        res.status(200).send(responseUser);
+      } else {
+        var nextUser = new User(result[0]);
 
-      var userMediaParams = {
-        userId: nextUser.socialId,
-        userAccessToken: nextUser.accessToken
-      };
+        var userMediaParams = {
+          userId: nextUser.socialId,
+          userAccessToken: nextUser.accessToken
+        };
 
-      getUserMedia(userMediaParams, function (err, userMedia) {
-        if (err) {
-          res.status(400).send(err);
-        } else {
-          var responseUser = {
-            userName: nextUser.userName,
-            profilePicture: nextUser.profilePicture,
-            socialId: nextUser.socialId,
-            socialMediaType: nextUser.socialMediaType,
-            isActive: nextUser.isActive,
-            userMedia: userMedia
-          };
+        getUserMedia(userMediaParams, function (err, userMedia) {
+          if (err) {
+            res.status(400).send(err);
+          } else {
+            var responseUser = {
+              id: nextUser.id,
+              userName: nextUser.userName,
+              profilePicture: nextUser.profilePicture,
+              socialId: nextUser.socialId,
+              socialMediaType: nextUser.socialMediaType,
+              isActive: nextUser.isActive,
+              userMedia: userMedia
+            };
 
-          res.status(200).json(responseUser);
-        }
-      });
+            res.status(200).json(responseUser);
+          }
+        });
+      }
     }
 
   });
