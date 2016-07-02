@@ -4,17 +4,17 @@
   angular.module('app.pool',[])
   .controller('PoolController', PoolController);
 
-  PoolController.$inject = ['$rootScope','PoolService'];
+  PoolController.$inject = ['$rootScope','PoolService', '$state'];
 
-  function PoolController($rootScope, PoolService) {
+  function PoolController($rootScope, PoolService, $state) {
     var vm = this;
+
+    var userId = 0;
     vm.candidateName='';
     vm.candidatePicUrl='';
-    vm.getNextCandidate = getNextCandidate;
-    vm.getPreviousCandidate = getPreviousCandidate;
+    vm.approveCandidate = approveCandidate;
+    vm.refuseCandidate = refuseCandidate;
     vm.pics = [];
-    vm.displayPic = displayPic;
-    var userMedia;
     var frames = 4;
 
     init();
@@ -25,21 +25,24 @@
 
     function getNextCandidate() {
       clearProfile();
-      getCandidateProfile();
-      getRecentMedia();
+      PoolService.getNextCandidate()
+      .then(displayUserData);
     }
 
-    function getPreviousCandidate() {
-      clearProfile();
-      getCandidateProfile();
-      getRecentMedia();
+    function approveCandidate() {
+      PoolService.approveCandidate(userId);
+      getNextCandidate();
     }
 
+    function refuseCandidate() {
+      PoolService.refuseCandidate(userId);
+      getNextCandidate();
+    }
 
     function clearProfile() {
-     vm.pics.length = 0;
-     vm.candidateName = "";
-     vm.candidatePicUrl = "";
+      vm.pics.length = 0;
+      vm.candidateName = "";
+      vm.candidatePicUrl = "";
     }
 
     function getCandidateProfile() {
@@ -47,46 +50,45 @@
       .then(displayUserData);
     }
 
-    function getRecentMedia() {
-      PoolService.getRecentMedia()
-      .then(extractMedia)
-      .then(displayPics);
-    }
-
-    function extractMedia(data) {
-      userMedia = data.data;
-      return this;
-    }
-
     function displayUserData(data) {
-      vm.candidateName = getUsername(data);
-      $rootScope.candidatePicUrl = getProfilePic(data);
-    }
-
-    function displayPics(data) {
-      getThumbsURLsfromData(userMedia);
-    }
-
-    function displayPic(index){
-      vm.candidatePicUrl = getPicUrl(userMedia, index);
-    }
-
-    function getPicUrl(userMedia, i) {
-      return userMedia.data[i].images.standard_resolution.url;
-    }
-
-    function getThumbsURLsfromData(userMedia) {
-      for (var i = 0; i < frames; i++) {
-        vm.pics.push(userMedia.data[i].images.thumbnail.url)
+      if (!data) {
+        console.log('Next candidate request failed');
+        $state.go('noUsers');
+        return;
       }
+      vm.candidateName = getCandidateName(data);
+      vm.candidatePicUrl = getCandidateProfilePic(data);
+      vm.pics = getCandidatePics(data);
+      userId = getUserId(data);
+
     }
 
-    function getUsername(data) {
-      return data.data.data.username;
+    function getUserId(data) {
+      return data.id;
     }
 
-    function getProfilePic(data) {
-      return changeUrlToBiggerPic(data.data.data.profile_picture);
+    function getCandidatePics(data) {
+      return getThumbsURLsfromData(data);
+    }
+
+    function getThumbsURLsfromData(data) {
+      if (data.userMedia.length === 0) {
+        console.log('No user media of candidate ' + vm.candidateName);
+        return [];
+      }
+      var picUrls = [];
+      for (var i = 0; i < frames; i++) {
+        picUrls.push(data.userMedia[i].images.thumbnail.url);
+      }
+      return picUrls;
+    }
+
+    function getCandidateName(data) {
+      return data.userName;
+    }
+
+    function getCandidateProfilePic(data) {
+      return changeUrlToBiggerPic(data.profilePicture);
     }
 
     function changeUrlToBiggerPic(url) {

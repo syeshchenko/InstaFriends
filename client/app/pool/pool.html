@@ -1,15 +1,11 @@
-<div class="mainFrame" ng-model="vm">
+<div class="poolFrame" ng-model="vm">
   <div id="candidateName">{{ vm.candidateName }}</div>
   <div id="candidatePic">
-    <img class="responsiveImg" ng-src="{{ candidatePicUrl }}">
+    <img class="responsiveImg" ng-src="{{ vm.candidatePicUrl }}">
   </div>
   <div id="controls">
-    <div class="control">
-      <img src="app/assets/svg/decline.svg" class="icon" alt="logout">
-    </div>
-    <div class="control">
-      <img src="app/assets/svg/add.svg" class="icon" alt="logout">
-    </div>
+    <div class="control" ng-click="vm.refuseCandidate()">NO</div>
+    <div class="control" ng-click="vm.approveCandidate()">YES</div>
   </div>
   <div id="pics" >
     <div class="pic" ng-repeat="url in vm.pics">
