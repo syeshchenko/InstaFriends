@@ -8,17 +8,21 @@ var mediaTypeMapper = require('../models/media_type_mapper');
 
 function initialize(passport) {
 
-  passport.serializeUser(function(user, callback) {
+  passport.serializeUser(function (user, callback) {
     callback(null, user.social_id);
   });
 
-  passport.deserializeUser(function(userSocialId, callback) {
+  passport.deserializeUser(function (userSocialId, callback) {
     var params = {
       socialId: userSocialId,
       socialMediaType: mediaTypeMapper.instagram
     };
-    UserDA.findUserBySocialId(params, function(err, user) {
-      callback(err, user);
+    UserDA.findUserBySocialId(params, function (err, result) {
+      if (err || !result.length) {
+        callback('Unable to find user by social id in DB', null);
+      } else {
+        callback(err, result[0]);
+      }
     });
   });
 

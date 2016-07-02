@@ -3,6 +3,8 @@ var User = require('../models/user');
 var UserDA = require('../data_access/user');
 var mediaTypeMapper = require('../models/media_type_mapper');
 
+var request = require('request');
+
 function getUsers(req, res, next) {
   UserDA.getAllUsers(function (err, users) {
 
@@ -22,34 +24,42 @@ function getOrCreateUser(token, refreshToken, profile, callback) {
       socialMediaType: mediaTypeMapper.instagram
     };
 
-    UserDA.findUserBySocialId(params, function (err, user) {
+    UserDA.findUserBySocialId(params, function (err, result) {
 
-      if (user) {
-        callback(null, user);
+      if (err) {
+        callback(err);
       } else {
+        if (result.length) {
+          callback(null, result[0]);
+        } else {
 
-        UserDA.createAccount(function (account) {
+          UserDA.createAccount(function (account) {
 
-          var params = {
-            social_id: profile.id,
-            user_name: profile.username,
-            profile_picture: profile._json.data.profile_picture,
-            social_media_type_id: mediaTypeMapper.instagram,
-            access_token: token,
-            is_active: true,
-            account_id: account.insertId
-          };
+            var params = {
+              social_id: profile.id,
+              user_name: profile.username,
+              profile_picture: profile._json.data.profile_picture,
+              social_media_type_id: mediaTypeMapper.instagram,
+              access_token: token,
+              is_active: true,
+              account_id: account.insertId
+            };
 
-          var newUser = new User(params);
+            var newUser = new User(params);
 
-          UserDA.createUser(newUser, function (err, createdUser) {
-            if (err) {
-              callback(err);
-            } else {
-              callback(null, createdUser);
-            }
+            UserDA.createUser(newUser, function (err, result) {
+              if (err) {
+                callback(err);
+              } else {
+                if (!result.length) {
+                  callback('Unable to find user after it was created');
+                } else {
+                  callback(null, result[0]);
+                }
+              }
+            });
           });
-        });
+        }
       }
     });
   });
@@ -61,6 +71,58 @@ function getUserProfile(req, res, next) {
   });
 }
 
+function getUserMedia(req, res, next) {
+
+  if (!req.body.userId || !req.body.socialMediaType) {
+    res.status(400).send('Valid params are not supplied. Required: user id and social media type');
+  } else {
+
+    var params = {
+      id: req.body.userId,
+      socialMediaType: req.body.socialMediaType
+    }
+
+    UserDA.findUserById(params, function (err, result) {
+
+      if (err) {
+        res.status(400).send(err);
+      } else {
+
+        if (!result.length) {
+          res.status(400).send('Unable to find specified user');
+        } else {
+
+          var user = new User(result[0]);
+
+          var igUserMediaApiUri = 'https://api.instagram.com/v1/users/USER-ID/media/recent/?access_token=ACCESS-TOKEN';
+          igUserMediaApiUri = igUserMediaApiUri.replace('USER-ID', user.socialId);
+          igUserMediaApiUri = igUserMediaApiUri.replace('ACCESS-TOKEN', user.accessToken);
+
+          request(igUserMediaApiUri, function (err, igMediaResponse, body) {
+            if (err) {
+              res.status(400).send(err);
+            } else {
+
+              var parsedIgMediaResponse = null;
+              try {
+                parsedIgMediaResponse = JSON.parse(body);
+              } catch (ex) { }
+
+              if (!parsedIgMediaResponse || !parsedIgMediaResponse.data) {
+                res.status(400).send('Unable to get Instagram media for the specified user');
+              } else {
+                res.status(200).send(parsedIgMediaResponse.data);
+              }
+            }
+          });
+        }
+      }
+    });
+  }
+}
+
 exports.getUserProfile = getUserProfile;
 exports.getUsers = getUsers;
 exports.getOrCreateUser = getOrCreateUser;
+exports.getUserMedia = getUserMedia;
+

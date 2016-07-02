@@ -100,11 +100,7 @@ function getIsFollowed(params, callback) {
         if (err) {
           callback(err)
         } else {
-          if (result.length) {
-            callback(null, result[0]);
-          } else {
-            callback({ message: 'Relationship does not exist' });
-          }
+          callback(null, result);
         }
       });
     }
