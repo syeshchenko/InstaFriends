@@ -25,6 +25,7 @@ function setup(router, app, passport) {
 
   router.post('/refuseCandidate', authController.isLoggedIn, poolController.refuseCandidate);
   router.post('/approveCandidate', authController.isLoggedIn, poolController.approveCandidate)
+  router.post('/userMedia', authController.isLoggedIn, usersController.getUserMedia);
 }
 
 module.exports.setup = setup;
