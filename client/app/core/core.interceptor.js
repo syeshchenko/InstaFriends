@@ -21,6 +21,11 @@
         $location.url('/login');
         return $q.reject(response);
       }
+
+      if (res.status === 400) {
+        console.log( '400 ' , res.data.message);
+      }
+
     }
   }
 
