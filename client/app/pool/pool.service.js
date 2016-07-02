@@ -1,46 +1,40 @@
 (function(){
   'use strict';
 
-  angular.module('app.pool')
-  .factory('PoolService', PoolService);
+  angular.module('app.pool').
+  factory('PoolService', PoolService);
 
-  PoolService.$inject = ['$http', '$rootScope'];
+  PoolService.$inject = ['$http'];
 
-  function PoolService($http, $rootScope) {
+  function PoolService($http) {
 
     return {
-      getCandidateProfile: getCandidateProfile,
-      getRecentMedia: getRecentMedia
+      getNextCandidate: getNextCandidate,
+      approveCandidate: approveCandidate,
+      refuseCandidate: refuseCandidate
+    };
+
+    function approveCandidate(userId) {
+      return $http.post('/api/approveCandidate', { approvedUserId: userId }, {});
+      // add error handling
     }
 
-
-    function getCandidateProfile() {
-      return getCandidateTokenFromServer()
-      .then(getCandidateProfileClientSide)
+    function refuseCandidate(userId) {
+      return $http.post('/api/refuseCandidate', { refusedUserId: userId }, {});
+      // add error handling
     }
 
-    function getRecentMedia() {
-      return getCandidateTokenFromServer()
-      .then(getRecentMediaClientSide)
+    function getNextCandidate() {
+      return $http.get('/api/nextCandidate').
+      then(extractData);
+    }
+    function handleError(err) {
+      console.log('No next candidate ',  err);
     }
 
-    function getCandidateTokenFromServer() { // temporary
-      return $http.get('/api/users').then(extractToken);
+    function extractData(data) {
+      if (!data) return;
+      return data.data;
     }
-
-    function extractToken(data) { // temporary
-      return data.data[0].access_token;
-    }
-
-    function getCandidateProfileClientSide(token) {
-      return $http.jsonp('https://api.instagram.com/v1/users/self/?access_token='
-       + token + '&callback=JSON_CALLBACK' );
-    }
-
-    function getRecentMediaClientSide(token) {
-      return $http.jsonp('https://api.instagram.com/v1/users/self/media/recent/?access_token='
-    + token + '&callback=JSON_CALLBACK');
-    }
-
   }
 })();

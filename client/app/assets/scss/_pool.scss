@@ -1,25 +1,143 @@
-.frame {
-  width: 70px;
-  height: 70px;
-  margin: 2px;
+.poolFrame {
+  width: 100%;
+  min-height: calc(100% - 50px);
+  background-color: #FAFAFA;
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.frameCenter {
+#noUsersMessage {
+  width: 300px;
+  height: 100px;
+  font-size: 30px;
+  text-align: center;
+  line-height: 100px;
+}
+
+#noUsersFrame {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#candidateName, #candidatePic, #controls, #pics {
+  width: 80%;
+}
+
+#candidateName {
+  height: 50px;
+  font-size: 2em;
+  font-weight: lighter;
+  text-align: center;
+}
+
+#candidatePic {
+  height: auto;
+  background-color: #444444;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+#controls {
+  margin-top: 20px;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.control {
+  width: 80px;
+  height: 80px;
+  border: 2px solid;
+  border-radius: 7px;
+  border-color: #999999;
+  color: #999999;
+  cursor: pointer;
+  line-height: 80px;
+  font-size: 24px;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+.control:hover {
+  border-color: $blackColor;
+  color: $blackColor;
+}
+
+
+#pics {
+  margin-top: 20px;
+  height: 80px;
   display: flex;
   justify-content: center;
 }
 
-#candidateName {
-  font-size: 3em;
-  font-weight: lighter;
-  height: 50px; }
+.pic {
+  width: 80px;
+  height: 80px;
+  margin: 0 2px 0 2px;
+  background-color: #444444;
+  border-radius: 7px;
+  overflow: hidden;
+}
 
-@media (min-width: 767px) {
-  .frame {
-    width: 100px;
+.responsiveImg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+
+@media (min-width: 767px) {}
+@media (min-width: 992px) {}
+@media (min-width: 1200px) {
+  #candidateName, #candidatePic, #controls, #pics {
+    width: 30%;
+  }
+
+  #pics {
     height: 100px;
+    margin-top: 50px;
+  }
+
+  .control {
+    line-height: 80px;
+    font-size: 28px;
   }
 }
 
-@media (min-width: 992px) {}
-@media (min-width: 1200px) {}
+@media (min-width: 1610px) {
+  #candidateName, #candidatePic, #controls, #pics {
+    width: 25%;
+  }
+  #controls, .control {
+    height: 100px;
+  }
+
+  .control {
+    width: 100px;
+    line-height: 100px;
+    font-size: 32px;
+  }
+
+  #candidateName {
+    height: 70px;
+    margin-top: 20px;
+    font-size: 3em;
+  }
+
+  .pic {
+    width: 100px;
+    height: 100px;
+  }
+
+  #pics {
+    height: 100px;
+    margin-top: 50px;
+  }
+
+}

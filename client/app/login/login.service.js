@@ -4,10 +4,10 @@
   angular.module('app.login')
   .factory('AuthService', AuthService);
 
-  AuthService.$inject = ['$http', '$rootScope', '$state'];
+  AuthService.$inject = ['$http', '$rootScope', '$state', '$q'];
 
 
-  function AuthService($http, $rootScope, $state) {
+  function AuthService($http, $rootScope, $state, $q) {
 
     $rootScope.isLoggedIn = false;
 
@@ -17,9 +17,15 @@
     };
 
     function isLoggedIn() {
-      if ($rootScope.isLoggedIn) return true;
-      else return IsUserLoggedInOnServer().
-      then(setUserLoggedInOnClient);
+      var deferred = $q.defer();
+      if ($rootScope.isLoggedIn) deferred.resolve(true);
+      else IsUserLoggedInOnServer().
+      then(function(loggedIn) {
+        setUserLoggedInOnClient(loggedIn);
+        deferred.resolve(loggedIn);
+      });
+
+      return deferred.promise;
     }
 
     function setUserLoggedOut() {
@@ -48,7 +54,6 @@
 
     function setUserLoggedInOnClient(loggedIn) {
       if (loggedIn === true) $rootScope.isLoggedIn = true;
-      return loggedIn;
     }
 
   }

@@ -2,17 +2,14 @@ $blackColor: #262626;
 $whiteColor: #FAFAFA;
 
 html, body {
-  height: 100%;
   margin: 0;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: 300;
 }
 
 body {
   background-color: $whiteColor;
   color: $blackColor;
-}
-
-.fill {
-  height: 100%;
 }
 
 .wrapper {
