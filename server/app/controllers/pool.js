@@ -9,64 +9,35 @@ function getNextCandidate(req, res, next) {
 
   var user = new User(req.user);
 
-  PoolDA.getNextCandidate(user, function (err, poolUser) {
+  PoolDA.getNextCandidate(user, function (err, result) {
 
     if (err) {
-      res.status(400).send(err);
+      res.status(400).send('Unable to get next candidate');
     } else {
 
-      var nextUser = new User(poolUser);
+      var responseUser = null;
 
-      var userMediaParams = {
-        userId: nextUser.socialId,
-        userAccessToken: nextUser.accessToken
-      };
+      if (!result.length) {
+        // if no next candidate - return user with id == -1
+        responseUser = {
+          id: -1
+        };
 
-      getUserMedia(userMediaParams, function (err, userMedia) {
-        if (err) {
-          res.status(400).send(err);
-        } else {
-          var responseUser = {
-            userName: nextUser.userName,
-            profilePicture: nextUser.profilePicture,
-            socialId: nextUser.socialId,
-            socialMediaType: nextUser.socialMediaType,
-            isActive: nextUser.isActive,
-            userMedia: userMedia
-          };
-
-          res.status(200).json(responseUser);
-        }
-      });
-    }
-
-  });
-
-}
-
-function getUserMedia(params, callback) {
-  var igUserMediaApiUri = 'https://api.instagram.com/v1/users/USER-ID/media/recent/?access_token=ACCESS-TOKEN';
-  igUserMediaApiUri = igUserMediaApiUri.replace('USER-ID', params.userId);
-  igUserMediaApiUri = igUserMediaApiUri.replace('ACCESS-TOKEN', params.userAccessToken);
-
-  request(igUserMediaApiUri, function (err, response, body) {
-    if (err) {
-      callback(err);
-    } else {
-
-      var res = null;
-      try {
-        var res = JSON.parse(body);
-      } catch (ex) { }
-
-      if (!res || !res.data) {
-        callback({ status: 'failed' });
       } else {
-        callback(null, res.data);
+        var nextUser = new User(result[0]);
+        responseUser = {
+          id: nextUser.id,
+          userName: nextUser.userName,
+          profilePicture: nextUser.profilePicture,
+          socialId: nextUser.socialId,
+          socialMediaType: nextUser.socialMediaType,
+          isActive: nextUser.isActive
+        };
       }
-
+      res.status(200).send(responseUser);
     }
   });
+
 }
 
 function refuseCandidate(req, res, next) {
@@ -83,11 +54,9 @@ function refuseCandidate(req, res, next) {
 
     if (err) {
       console.log('error: ', err);
-      res.status(400).send(err);
+      res.status(400).send('Unable to refuse candidate in DB');
     } else {
-      res.status(201).send({
-        status: 'success'
-      });
+      res.status(201).send('Refused candidate');
     }
   });
 }
@@ -108,7 +77,7 @@ function approveCandidate(req, res, next) {
   PoolDA.approveCandidate(params, function (err, success) {
     if (err) {
       console.log('error: ', err);
-      res.status(400).send(err);
+      res.status(400).send('Unable to approve candidate in DB');
     } else {
 
       var userMatchParams = {
@@ -117,67 +86,61 @@ function approveCandidate(req, res, next) {
       };
 
       // check is user you just approved - already approved you before
-      PoolDA.getIsFollowed(userMatchParams, function (err, success) {
+      PoolDA.getIsFollowed(userMatchParams, function (err, result) {
         if (err) {
-          // nope, first relationship was created, and that's it for now
-          if (err.message && err.message.indexOf('Relationship does not exist') > -1) {
-            res.status(201).send('created first relationship');
-          } else {
-            // something went wrong, we couldn't even create first relationship
-            console.log('Unable to create first relationship: ', err);
-            res.status(400).send(err);
-          }
-
+          res.status(400).send('Unable to get IsFollowed from DB');
         } else {
 
-          var params = {
-            id: approvedUserId,
-            socialMediaType: mediaTypeMapper.instagram
-          };
+          if (!result.length) {
+            res.status(200).send('Created first relationship');
+          } else {
+            var params = {
+              id: approvedUserId,
+              socialMediaType: mediaTypeMapper.instagram
+            };
 
-          // users have follow relationship with each other, going to actually create it on Instagram
+            // users have follow relationship with each other, going to actually create it on Instagram
 
-          // get access token of the second user
-          UserDA.findUserById(params, function (err, secondUser) {
-            if (err) {
-              console.log('err: ', err);
-              res.status(400).send('Unable to get second user by id: ' + err);
-            } else {
+            // get access token of the second user
+            UserDA.findUserById(params, function (err, secondUserResult) {
+              if (err || !secondUserResult.length) {
+                res.status(400).send('Unable to get second user by id');
+              } else {
 
-              var secondUserObject = new User(secondUser);
+                var secondUserObject = new User(secondUserResult[0]);
 
-              var firstFollowParams = {
-                followerAccessToken: user.accessToken,
-                userIdToFollow: secondUserObject.socialId
-              };
+                var firstFollowParams = {
+                  followerAccessToken: user.accessToken,
+                  userIdToFollow: secondUserObject.socialId
+                };
 
-              // current user to IG follow user they just 'followed' in our app
-              createFollowRelationship(firstFollowParams, function (err, callback) {
-                if (err) {
-                  console.log('err: ', err);
-                  res.status(400).send('Unable to create first relationship between users: ' + err);
-                } else {
+                // current user to IG follow user they just 'followed' in our app
+                createFollowRelationship(firstFollowParams, function (err, callback) {
+                  if (err) {
+                    console.log('err: ', err);
+                    res.status(400).send('Unable to create first relationship between users');
+                  } else {
 
-                  var secondFollowParams = {
-                    followerAccessToken: secondUserObject.accessToken,
-                    userIdToFollow: user.socialId
-                  };
+                    var secondFollowParams = {
+                      followerAccessToken: secondUserObject.accessToken,
+                      userIdToFollow: user.socialId
+                    };
 
-                  // create second relationship, the second user to IG follow current user
-                  createFollowRelationship(secondFollowParams, function (err, result) {
-                    if (err) {
-                      console.log('err: ', err);
-                      res.status(400).send('Unable to create second relationship between users: ' + err);
-                    } else {
-                      // everything worked out
-                      res.status(201).send('Users followed each other');
-                    }
-                  });
-
-                }
-              });
-            }
-          });
+                    // create second relationship, the second user to IG follow current user
+                    createFollowRelationship(secondFollowParams, function (err, result) {
+                      if (err) {
+                        console.log('err: ', err);
+                        res.status(400).send('Unable to create second relationship between users ');
+                      } else {
+                        // everything worked out
+                        res.status(201).send('Users followed each other');
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          }
         }
       });
     }

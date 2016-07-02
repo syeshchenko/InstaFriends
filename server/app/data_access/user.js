@@ -11,7 +11,7 @@ function findUserById(params, callback) {
     var query = 'SELECT * from users where id = ' + params.id + ' AND social_media_type_id = ' + connection.escape(params.socialMediaType);
 
     // perform a query
-    connection.query(query, function (err, rows) {
+    connection.query(query, function (err, result) {
 
       // release the connection so it goes back to pool
       connection.release();
@@ -19,13 +19,7 @@ function findUserById(params, callback) {
       if (err) {
         callback(err);
       } else {
-
-        // if
-        if (rows.length) {
-          callback(null, rows[0]);
-        } else {
-          callback({message: 'Unable to find user by id'});
-        }
+        callback(null, result);
       }
 
     });
@@ -33,7 +27,7 @@ function findUserById(params, callback) {
   });
 };
 
-module.exports.findUserBySocialId = function findUserBySocialId(params, callback) {
+function findUserBySocialId(params, callback) {
 
   pool.getConnection(function (err, connection) {
 
@@ -51,17 +45,13 @@ module.exports.findUserBySocialId = function findUserBySocialId(params, callback
       if (err) {
         callback(err);
       } else {
-        if (result.length) {
-          callback(null, result[0]);
-        } else {
-          callback({ "message": "Unable to find user by social id" });
-        }
+        callback(null, result);
       }
     });
   });
 };
 
-module.exports.createAccount = function createAccount(callback) {
+function createAccount(callback) {
 
   pool.getConnection(function (err, connection) {
 
@@ -84,7 +74,7 @@ module.exports.createAccount = function createAccount(callback) {
   });
 };
 
-module.exports.createUser = function getOrCreateInstagramUser(user, callback) {
+function createUser(user, callback) {
 
   pool.getConnection(function (err, connection) {
 
@@ -107,13 +97,11 @@ module.exports.createUser = function getOrCreateInstagramUser(user, callback) {
             socialMediaType: user.socialMediaType
           }
 
-          findUserById(params, function (err, user) {
+          findUserById(params, function (err, result) {
             if (err) {
               callback(err);
-            }
-
-            if (user) {
-              callback(null, user);
+            } else {
+              callback(null, result);
             }
           });
         }
@@ -122,7 +110,7 @@ module.exports.createUser = function getOrCreateInstagramUser(user, callback) {
   });
 };
 
-module.exports.getAllUsers = function getAllUsers(callback) {
+function getAllUsers(callback) {
 
   pool.getConnection(function (err, connection) {
 
@@ -146,3 +134,7 @@ module.exports.getAllUsers = function getAllUsers(callback) {
 }
 
 module.exports.findUserById = findUserById;
+module.exports.getAllUsers = getAllUsers;
+module.exports.createUser = createUser;
+module.exports.createAccount = createAccount;
+module.exports.findUserBySocialId = findUserBySocialId;
