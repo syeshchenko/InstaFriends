@@ -11,18 +11,26 @@
     return {
       getNextCandidate: getNextCandidate,
       approveCandidate: approveCandidate,
-      refuseCandidate: refuseCandidate
+      refuseCandidate: refuseCandidate,
+      getUserMedia: getUserMedia
     };
 
     function approveCandidate(userId) {
-      return $http.post('/api/approveCandidate', { approvedUserId: userId }, {});
+      return $http.post('/api/approveCandidate', { 'approvedUserId': userId }, {});
       // add error handling
     }
 
     function refuseCandidate(userId) {
-      return $http.post('/api/refuseCandidate', { refusedUserId: userId }, {});
+      return $http.post('/api/refuseCandidate', { 'refusedUserId': userId }, {});
       // add error handling
     }
+
+    function getUserMedia(userId, socialMediaType) {
+      return $http.post('/api/userMedia', { 'userId': userId, 'socialMediaType': socialMediaType }, {});
+      // add error handling
+    }
+
+
 
     function getNextCandidate() {
       return $http.get('/api/nextCandidate').

@@ -10,14 +10,17 @@
     var vm = this;
 
     var userId = 0;
+    var socialMediaType = 1;
+    var userMedia = [];
     vm.candidateName='';
     vm.candidatePicUrl='';
     vm.approveCandidate = approveCandidate;
     vm.refuseCandidate = refuseCandidate;
+    vm.displayPicInMainFrame = displayPicInMainFrame;
     vm.pics = [];
     var frames = 4;
 
-    init();
+  init();
 
     function init() {
       getNextCandidate();
@@ -45,40 +48,56 @@
       vm.candidatePicUrl = "";
     }
 
-    function getCandidateProfile() {
-      PoolService.getCandidateProfile()
-      .then(displayUserData);
-    }
-
     function displayUserData(data) {
-      if (!data) {
-        console.log('Next candidate request failed');
+      if (getUserId(data) === -1) {
         $state.go('noUsers');
         return;
       }
       vm.candidateName = getCandidateName(data);
       vm.candidatePicUrl = getCandidateProfilePic(data);
-      vm.pics = getCandidatePics(data);
       userId = getUserId(data);
-
+      socialMediaType = getSocialMediaType(data);
+      getCandidatePics(userId, socialMediaType);
     }
 
     function getUserId(data) {
       return data.id;
     }
 
-    function getCandidatePics(data) {
-      return getThumbsURLsfromData(data);
+    function getSocialMediaType(data) {
+      return data.socialMediaType;
     }
 
-    function getThumbsURLsfromData(data) {
-      if (data.userMedia.length === 0) {
+    function getCandidatePics(userId, socialMediaType) {
+      return PoolService.getUserMedia(userId, socialMediaType).
+      then(displayCandidatePics);
+    }
+
+    function displayCandidatePics(data) {
+      if (data.data.length === 0) {
         console.log('No user media of candidate ' + vm.candidateName);
-        return [];
+        return;
       }
+      userMedia = extractUserMedia(data);
+      vm.pics = getThumbsURLsfromData(userMedia);
+    }
+
+    function extractUserMedia(data) {
+      return data.data;
+    }
+
+    function displayPicInMainFrame(index){
+     vm.candidatePicUrl = getPicUrlFromPics(index);
+   }
+
+   function getPicUrlFromPics(i) {
+     return userMedia[i].images.standard_resolution.url;
+   }
+
+    function getThumbsURLsfromData(media) {
       var picUrls = [];
       for (var i = 0; i < frames; i++) {
-        picUrls.push(data.userMedia[i].images.thumbnail.url);
+        picUrls.push(media[i].images.thumbnail.url);
       }
       return picUrls;
     }

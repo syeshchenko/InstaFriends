@@ -8,8 +8,9 @@
     <div class="control" ng-click="vm.approveCandidate()">YES</div>
   </div>
   <div id="pics" >
-    <div class="pic" ng-repeat="url in vm.pics">
-      <img class="responsiveImg" ng-src="{{ url }}">
-    </div>
+    <div class="pic clickable" ng-repeat="url in vm.pics"
+    ng-click="vm.displayPicInMainFrame($index)">
+    <img class="responsiveImg" ng-src="{{ url }}">
   </div>
+</div>
 </div>
