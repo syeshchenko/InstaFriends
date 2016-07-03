@@ -1,9 +1,10 @@
-<div class="poolFrame" ng-model="vm">
+<div class="poolFrame" ng-model="vm" ng-cloak>
   <div id="candidateName">{{ vm.candidateName }}</div>
   <div id="candidatePic">
-    <img class="responsiveImg" ng-src="{{ vm.candidatePicUrl }}">
+    <img class="responsiveImg" ng-if="vm.isCandidateAvailable" ng-src="{{ vm.candidatePicUrl }}">
+    <div id="noUsersMessage" ng-if="!vm.isCandidateAvailable">{{ vm.noUsersMessage }}</div>
   </div>
-  <div id="controls">
+  <div id="controls" ng-if="vm.isCandidateAvailable">
     <div class="control" ng-click="vm.refuseCandidate()">NO</div>
     <div class="control" ng-click="vm.approveCandidate()">YES</div>
   </div>
