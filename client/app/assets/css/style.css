@@ -108,7 +108,18 @@ body {
   text-align: center;
   background-color: #E0E0E0;
   font-size: 24px;
-  font-weight: 200; }
+  font-weight: 200;
+  display: flex; }
+
+#buttonCaption {
+  width: 250px;
+  height: 100%; }
+
+#instaIcon {
+  width: 50px;
+  height: 100%;
+  padding-top: 5px;
+  padding-right: 5px; }
 
 .poolFrame {
   width: 100%;
