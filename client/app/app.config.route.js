@@ -27,9 +27,6 @@
       templateUrl: '/app/pool/pool.html',
       controller: 'PoolController',
       controllerAs: 'vm'
-    })
-    .state('noUsers', { // this state user enters when he is logged in
-      templateUrl: '/app/pool/nousers.html'
     });
   }
 
