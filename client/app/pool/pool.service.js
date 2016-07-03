@@ -12,7 +12,7 @@
       getNextCandidate: getNextCandidate,
       approveCandidate: approveCandidate,
       refuseCandidate: refuseCandidate,
-      getUserMedia: getUserMedia
+      getCandidateMedia: getUserMedia
     };
 
     function approveCandidate(userId) {
