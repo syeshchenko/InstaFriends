@@ -17,71 +17,19 @@ body {
   height: 100vh;
 }
 
+.responsiveImg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
 .center {
   display: flex;
   align-items: center;
 }
 
-.vcenter {
-  text-align: center;
-}
-
-.flex-end {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.flex-start {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.padding-b-30 {
-  padding-bottom: 30px;
-}
-
-.padding-t-30 {
-  padding-top: 30px;
-}
-
-.padding-t-50 {
-  padding-top: 50px;
-}
-
-.padding-l-r-50 {
-  padding: 0 50px 0 50px;
-}
-
-.margin-b-50 {
-  margin-bottom: 50px;
-}
-
-.margin-t-50 {
-  margin-top: 50px;
-}
-
-.size-50 {
-  font-size: 50px;
-}
-
 .clickable {
   cursor: pointer;
-}
-
-.arrowSize {
-  height: 50px;
-}
-
-.right {
-  text-align: right;
-}
-
-.shade {
-  opacity: 0.1;
-}
-
-.shade:hover {
-  opacity: 1;
 }
 
 .button {
@@ -104,9 +52,6 @@ body {
   border-radius: 7px;
 }
 
-.wide {
-  width: 100%;
-}
 
 @media (min-width: 767px) {}
 @media (min-width: 992px) {}
