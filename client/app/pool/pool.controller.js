@@ -9,13 +9,18 @@
   function PoolController($rootScope, PoolService, $state) {
     var vm = this;
 
-    var userId = 0;
+    var candidateId = 0; // holds userId from the database
+    var candidateSocialMediaType = 0; // holds candidatecandidateSocialMediaType of current candidate
+    var candidateMedia = [];
     vm.candidateName='';
     vm.candidatePicUrl='';
     vm.approveCandidate = approveCandidate;
     vm.refuseCandidate = refuseCandidate;
+    vm.displayPicInMainFrame = displayPicInMainFrame;
+    vm.noUsersMessage = '';
+    vm.isCandidateAvailable = false;
     vm.pics = [];
-    var frames = 4;
+    var frames = 4; // 4 pics to display
 
     init();
 
@@ -30,12 +35,12 @@
     }
 
     function approveCandidate() {
-      PoolService.approveCandidate(userId);
+      PoolService.approveCandidate(candidateId);
       getNextCandidate();
     }
 
     function refuseCandidate() {
-      PoolService.refuseCandidate(userId);
+      PoolService.refuseCandidate(candidateId);
       getNextCandidate();
     }
 
@@ -43,42 +48,67 @@
       vm.pics.length = 0;
       vm.candidateName = "";
       vm.candidatePicUrl = "";
-    }
-
-    function getCandidateProfile() {
-      PoolService.getCandidateProfile()
-      .then(displayUserData);
+      candidateId = 0;
+      candidateSocialMediaType = 0;
     }
 
     function displayUserData(data) {
-      if (!data) {
-        console.log('Next candidate request failed');
-        $state.go('noUsers');
+      if (getCandidateId(data) === -1) {
+        showNoMoreUsersState();
         return;
       }
+      vm.isCandidateAvailable = true;
       vm.candidateName = getCandidateName(data);
       vm.candidatePicUrl = getCandidateProfilePic(data);
-      vm.pics = getCandidatePics(data);
-      userId = getUserId(data);
+      candidateId = getCandidateId(data);
+      candidateSocialMediaType = getCandidateSocialMediaType(data);
+      getCandidatePics(candidateId, candidateSocialMediaType);
+    }
+
+    function showNoMoreUsersState() {
+      vm.isCandidateAvailable = false;
+      vm.noUsersMessage = 'NO MORE CANDIDATES';
 
     }
 
-    function getUserId(data) {
+    function getCandidateId(data) {
       return data.id;
     }
 
-    function getCandidatePics(data) {
-      return getThumbsURLsfromData(data);
+    function getCandidateSocialMediaType(data) {
+      return data.socialMediaType;
     }
 
-    function getThumbsURLsfromData(data) {
-      if (data.userMedia.length === 0) {
+    function getCandidatePics(candidateId, candidateSocialMediaType) {
+      return PoolService.getCandidateMedia(candidateId, candidateSocialMediaType).
+      then(displayCandidatePics);
+    }
+
+    function displayCandidatePics(data) {
+      if (data.data.length === 0) {
         console.log('No user media of candidate ' + vm.candidateName);
-        return [];
+        return;
       }
+      candidateMedia = extractCandidateMedia(data);
+      vm.pics = getThumbsURLsfromData(candidateMedia);
+    }
+
+    function extractCandidateMedia(data) {
+      return data.data;
+    }
+
+    function displayPicInMainFrame(index){
+      vm.candidatePicUrl = getPicUrlFromPics(index);
+    }
+
+    function getPicUrlFromPics(i) {
+      return candidateMedia[i].images.standard_resolution.url;
+    }
+
+    function getThumbsURLsfromData(media) {
       var picUrls = [];
       for (var i = 0; i < frames; i++) {
-        picUrls.push(data.userMedia[i].images.thumbnail.url);
+        picUrls.push(media[i].images.thumbnail.url);
       }
       return picUrls;
     }
