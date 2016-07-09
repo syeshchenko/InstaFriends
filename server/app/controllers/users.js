@@ -1,7 +1,11 @@
 var config = require('../../config');
-var User = require('../models/user');
 var UserDA = require('../data_access/user');
 var mediaTypeMapper = require('../models/media_type_mapper');
+
+// models
+var User = require('../models/user');
+var SocialMedia = require('../models/social_media');
+var ResponseUser = require('../models/response_user');
 
 var request = require('request');
 
@@ -11,7 +15,12 @@ function getUsers(req, res, next) {
     if (err) {
       res.status(400).send(err);
     } else {
-      res.json(users);
+      var responseUsers = [];
+      for (var i = 0; i < users.length; i++) {
+        responseUsers.push(new ResponseUser(users[i]));
+      }
+
+      res.json(responseUsers);
     }
   });
 }
@@ -66,20 +75,21 @@ function getOrCreateUser(token, refreshToken, profile, callback) {
 }
 
 function getUserProfile(req, res, next) {
-  res.json({
-    user: req.user
-  });
+  var responseUser = new ResponseUser(req.user);
+  res.json(responseUser);
 }
 
 function getUserMedia(req, res, next) {
 
-  if (!req.body.userId || !req.body.socialMediaType) {
-    res.status(400).send('Valid params are not supplied. Required: user id and social media type');
+  var socialMedia = new SocialMedia(req);
+
+  if (!socialMedia.validator.state.isValid) {
+    res.status(400).send(socialMedia.validator.state.message);
   } else {
 
     var params = {
-      id: req.body.userId,
-      socialMediaType: req.body.socialMediaType
+      id: socialMedia.userId,
+      socialMediaType: socialMedia.socialMediaType
     }
 
     UserDA.findUserById(params, function (err, result) {
@@ -89,7 +99,7 @@ function getUserMedia(req, res, next) {
       } else {
 
         if (!result.length) {
-          res.status(400).send('Unable to find specified user');
+          res.status(400).send('Unable to find specified user in DB');
         } else {
 
           var user = new User(result[0]);

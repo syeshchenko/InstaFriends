@@ -41,7 +41,7 @@ function create(app) {
 
   start(app).listen(port, function() {
     address = "https://localhost";
-    console.log('InstaFriends is running at ' + address + ':' + port);
+    console.log('Process ' + process.pid + ' is listening to all incoming requests at ' + address + ':' + port);
   });
 
 }

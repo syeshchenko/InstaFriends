@@ -1,7 +1,10 @@
 
 // remove user from session
 function logout(req, res) {
+  
   req.logout();
+  res.cookie("express.sid", "", { expires: new Date() });
+
   res.redirect('/');
 }
 
