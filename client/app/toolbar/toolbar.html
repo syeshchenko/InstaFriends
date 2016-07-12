@@ -2,13 +2,21 @@
 ng-click="vm.toggleToolbar()"
 ng-class="{ active: vm.isOpen }"
 ng-show="isLoggedIn">
-<div id="profile"></div>
+<div id="profile">
+  <div id="bigProfilePhoto">
+    <img class="responsiveImg roundBorders-7" ng-src="{{ vm.userPicUrl }}">
+  </div>
+  <div id="profileInfo">
+    <div id="username">{{ vm.username }}</div>
+  </div>
+  <div id="filler"></div>
+</div>
 <div id="actionButtons">
-  <div id="profilePhoto">
+  <div id="miniProfilePhoto" ng-if="!vm.isOpen">
     <img class="responsiveImg roundBorders-7" ng-src="{{ vm.userPicUrl }}">
   </div>
   <div id="pulldownButton"></div>
-  <div id="logoutButton" ng-click="vm.logout()">
+  <div id="logoutButton" ng-click="vm.logout()" ng-if="!vm.isOpen">
     <img src="app/assets/svg/logout.svg" height="30px" alt="logout">
   </div>
 </div>
