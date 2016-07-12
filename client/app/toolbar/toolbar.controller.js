@@ -10,6 +10,7 @@
     var vm = this;
     vm.isOpen = false;
     vm.userPicUrl = '';
+    vm.username = '';
 
     vm.toggleToolbar = toggleToolbar;
     vm.logout = logout;
@@ -17,25 +18,30 @@
     init();
 
     function init() {
-      getUserPic();
+      getUserProfile();
     }
 
-    function getUserPic() {
-    ProfileService.getProfile().
-    then(extractUserPic).
-    then(displayUserPic);
+    function getUserProfile() {
+      ProfileService.getProfile().
+      then(extractUserProfile).
+      then(displayUserProfile);
     }
 
-    function extractUserPic(data) {
-      return data.data.user.profile_picture;
+    function extractUserProfile(data) {
+      return data.data.user;
     }
 
-    function extractUsername(data) {
-      return data.data.user.user_name;
+    function displayUserProfile(data) {
+      vm.username = getUsername(data);
+      vm.userPicUrl = getUserPic(data);
     }
 
-    function displayUserPic(url) {
-      vm.userPicUrl = url;
+    function getUsername(data) {
+      return data.user_name;
+    }
+
+    function getUserPic(data) {
+      return data.profile_picture;
     }
 
     function toggleToolbar() {
@@ -43,6 +49,7 @@
     }
 
     function logout() {
+      vm.isOpen = false; // to remove mask
       AuthService.setUserLoggedOut();
     }
   }
