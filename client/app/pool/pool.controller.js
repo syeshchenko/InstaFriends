@@ -30,8 +30,8 @@
 
     function getNextCandidate() {
       clearProfile();
-      PoolService.getNextCandidate()
-      .then(displayUserData);
+      PoolService.getNextCandidate().
+      success(displayUserData);
     }
 
     function approveCandidate() {
