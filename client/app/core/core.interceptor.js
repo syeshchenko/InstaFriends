@@ -4,13 +4,15 @@
   angular.module('app.core',['ui.router'])
   .factory('StatusCodeInterceptor', StatusCodeInterceptor);
 
-  StatusCodeInterceptor.$inject = ['$q', '$location'];
+  StatusCodeInterceptor.$inject = ['$q', '$location', '$rootScope'];
 
-  function StatusCodeInterceptor($q, $location) {
+  function StatusCodeInterceptor($q, $location, $rootScope) {
     return {
       response: response,
       responseError: responseError
     };
+
+    var ctr = 0; // counter for errors
 
     function response(res) {
       return res;
@@ -19,11 +21,17 @@
     function responseError(res) {
       if (res.status === 401) {
         $location.url('/login');
+        $rootScope.messages.add('Please authorize!');
         return $q.reject(response);
       }
 
       if (res.status === 400) {
-        console.log( '400 ' , res.data.message);
+        $rootScope.messages.add('Server issues. Please try again later.');
+        console.log( '400 Bad request: ' , res.data.message);
+      }
+
+      if (res.status < 0) {
+        $rootScope.messages.add('Server issues. Please try again later.');
       }
 
     }
