@@ -4,9 +4,9 @@
   angular.module('app.toolbar', []).
   controller('ToolbarController', ToolbarController);
 
-  ToolbarController.$inject = ['AuthService', 'ProfileService'];
+  ToolbarController.$inject = ['AuthService', 'ProfileService', '$rootScope'];
 
-  function ToolbarController(AuthService, ProfileService) {
+  function ToolbarController(AuthService, ProfileService, $rootScope) {
     var vm = this;
     vm.isOpen = false;
     vm.userPicUrl = '';
@@ -15,11 +15,11 @@
     vm.toggleToolbar = toggleToolbar;
     vm.logout = logout;
 
-    init();
-
-    function init() {
-      getUserProfile();
-    }
+    $rootScope.$watch('isLoggedIn', function(val) {
+      if (val === true) {
+        getUserProfile();
+      }
+    }); // get user profile when the user is logged in
 
     function getUserProfile() {
       ProfileService.getProfile().
@@ -49,7 +49,6 @@
     }
 
     function logout() {
-      vm.isOpen = false; // to remove mask
       AuthService.setUserLoggedOut();
     }
   }
