@@ -6,17 +6,21 @@
 </head>
 <title>InstaFriends</title>
 <body>
+  <notifications></notifications>
   <toolbar></toolbar>
   <div class="wrapper" ui-view></div>
   <!-- vendors -->
-  <script type="text/javascript" src="/node_modules/angular/angular.js"></script>
-  <script type="text/javascript" src="/node_modules/angular-ui-router/release/angular-ui-router.js"></script>
-  <script type="text/javascript" src="/node_modules/jquery/dist/jquery.js"></script>
+  <script type="text/javascript" src="/node_modules/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="/node_modules/angular/angular.min.js"></script>
+  <script type="text/javascript" src="/node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
   <!-- app -->
   <script type="text/javascript" src="/app/app.module.js"></script>
   <script type="text/javascript" src="/app/app.config.route.js"></script>
   <!-- core -->
   <script type="text/javascript" src="/app/core/core.interceptor.js"></script>
+  <!-- notifications -->
+  <script type="text/javascript" src="/app/notifications/notifications.controller.js"></script>
+  <script type="text/javascript" src="/app/notifications/notifications.directive.js"></script>
   <!-- login -->
   <script type="text/javascript" src="/app/login/login.controller.js"></script>
   <script type="text/javascript" src="/app/login/login.service.js"></script>
