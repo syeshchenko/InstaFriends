@@ -6,6 +6,7 @@
     'app.toolbar',
     'app.login',
     'app.pool',
-    'app.profile'
+    'app.profile',
+    'app.notifications'
   ]);
 })();
