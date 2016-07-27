@@ -7,45 +7,51 @@ var session = require('express-session');
 var flash = require('connect-flash');
 var MySQLStore = require('express-mysql-session')(session);
 
-var config = require('./config');
+var config = require('./config_' + process.env.APP_STATE);
 var router = require('./routes');
 var passportController = require('./app/controllers/passport');
 var serverConroller = require('./app/controllers/server');
-var mySqlConnection = require('./app/data_access/connection').Connection;
+var pool = require('./app/data_access/connection_pool').Pool;
 
 function initialize() {
-  // pass passport for configuration
-  passportController.initialize(passport);
 
-  var apiRoutes = express.Router();
+  // create mysql connection first
+  pool.getConnection(function (err, connection) {
 
-  // setup bodyParser middleware so we can get variables passed with request
-  app.use(bodyParser.urlencoded({
-    extended: false
-  }));
-  app.use(bodyParser.json());
+    // pass passport for configuration
+    passportController.initialize(passport);
 
-  // set up logs output to console
-  app.use(morgan('dev'));
+    var apiRoutes = express.Router();
 
-  // required for passport
-  var sessionStore = new MySQLStore({}, mySqlConnection);
-  app.use(session({ store: sessionStore, secret: config.secret, httpOnly: true, secure: true, resave: false, saveUninitialized: true }));
+    // setup bodyParser middleware so we can get variables passed with request
+    app.use(bodyParser.urlencoded({
+      extended: false
+    }));
+    app.use(bodyParser.json());
 
-  // app.use(session({ secret: config.secret })); // session secret
-  app.use(passport.initialize());
-  app.use(passport.session()); // persistent login sessions
-  app.use(flash()); // use connect-flash for flash messages stored in session
+    // set up logs output to console
+    app.use(morgan('dev'));
 
-  // serve static files
-  app.use(express.static("../client/"));
+    // required for passport
+    var sessionStore = new MySQLStore({}, connection);
+    app.use(session({ store: sessionStore, secret: config.secret, httpOnly: true, secure: true, resave: false, saveUninitialized: true }));
 
-  // set up routes
-  router.setup(apiRoutes, app, passport);
-  app.use('/api', apiRoutes);
+    // app.use(session({ secret: config.secret })); // session secret
+    app.use(passport.initialize());
+    app.use(passport.session()); // persistent login sessions
+    app.use(flash()); // use connect-flash for flash messages stored in session
 
-  // start http/https server
-  serverConroller.create(app);
+    // serve static files
+    app.use(express.static("../client/"));
+
+    // set up routes
+    router.setup(apiRoutes, app, passport);
+    app.use('/api', apiRoutes);
+
+    // start http/https server
+    serverConroller.create(app);
+
+  });
 }
 
 exports.app = app;
