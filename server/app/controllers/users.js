@@ -1,4 +1,4 @@
-var config = require('../../config');
+var config = require('../../config_' + process.env.APP_STATE);
 var UserDA = require('../data_access/user');
 var mediaTypeMapper = require('../models/media_type_mapper');
 
