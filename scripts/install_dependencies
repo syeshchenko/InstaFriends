@@ -1,0 +1,9 @@
+#!/bin/bash
+cd /home/ubuntu/followeez/server/
+npm install 
+cd cd /home/ubuntu/followeez/client/
+npm install
+
+cp /home/ubuntu/followeez_configs/config_development.js /home/ubuntu/followeez/app/server/
+
+
