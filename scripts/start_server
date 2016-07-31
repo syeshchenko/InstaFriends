@@ -1,3 +1,2 @@
 #!/bin/bash
-export APP_STATE=development
-pm2 restart /home/ubuntu/followeez/server/index.js
+APP_STATE=development pm2 start /home/ubuntu/followeez/server/index.js --name="followeez"

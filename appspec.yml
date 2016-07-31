@@ -4,12 +4,12 @@ files:
   - source: /app/
     destination: /home/ubuntu/followeez/
 hooks:
-  BeforeInstall:
+  AfterInstall:
     - location: scripts/install_dependencies
       timeout: 3000
       runas: root
-  ApplicationStop:
-    - location: scripts/stop_server
+  BeforeInstall:
+    - location: scripts/before_install
       timeout: 3000
       runas: root
   ApplicationStart:

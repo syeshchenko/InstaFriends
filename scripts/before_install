@@ -1,0 +1,3 @@
+#!/bin/bash
+sudo rm -rvf /home/ubuntu/followeez/
+pm2 kill
