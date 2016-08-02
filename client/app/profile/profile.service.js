@@ -1,24 +1,20 @@
 (function() {
   'use strict';
 
-  angular.module('app.profile')
-  .factory('InfoService', InfoService);
+  angular.module('app.profile',[])
+  .factory('ProfileService', ProfileService);
 
-  InfoService.$inject = ['$http', '$rootScope'];
+  ProfileService.$inject = ['$http'];
 
-  function InfoService($http, $rootScope) {
+  function ProfileService($http) {
 
     return {
-      getProfileData: getProfileData
+      getProfile: getProfile
     };
 
-    function getProfileData() {
-      return $http.get('/api/users')
-      .then(extractUsername);
+    function getProfile() {
+      return $http.get('/api/profile');
     }
 
-    function extractUsername(data) {
-      return data.data[0].user_name;
-    }
   }
 })();

@@ -4,126 +4,152 @@
   angular.module('app.pool',[])
   .controller('PoolController', PoolController);
 
-  PoolController.$inject = ['$rootScope','PoolService', '$state'];
+  PoolController.$inject = ['$rootScope','PoolService'];
 
-  function PoolController($rootScope, PoolService, $state) {
+  function PoolController($rootScope, PoolService) {
     var vm = this;
 
-    var candidateId = 0; // holds userId from the database
-    var candidateSocialMediaType = 0; // holds candidatecandidateSocialMediaType of current candidate
-    var candidateMedia = [];
+    vm.candidateId = 0; // holds userId from the database
+    vm.candidateSocialMediaType = 0; // holds candidate of current candidate
+    vm.candidateMedia = [];
     vm.candidateName='';
     vm.candidatePicUrl='';
-    vm.approveCandidate = approveCandidate;
-    vm.refuseCandidate = refuseCandidate;
-    vm.displayPicInMainFrame = displayPicInMainFrame;
     vm.noUsersMessage = '';
     vm.isCandidateAvailable = false;
     vm.pics = [];
-    var frames = 4; // 4 pics to display
+    vm.frames = 4; // 4 pics to display
 
-    init();
+    vm.init = function() {
+      vm.getNextCandidate();
+    };
 
-    function init() {
-      getNextCandidate();
-    }
-
-    function getNextCandidate() {
-      clearProfile();
+    vm.getNextCandidate = function() {
+      vm.clearProfile();
       PoolService.getNextCandidate().
-      success(displayUserData);
-    }
+      success(vm.displayUserData).
+      error(function(err) {
+        vm.logError('Fetching next candidate failed', err);
+      });
+    };
 
-    function approveCandidate() {
-      PoolService.approveCandidate(candidateId);
-      getNextCandidate();
-    }
+    vm.approveCandidate = function() {
+      PoolService.approveCandidate(vm.candidateId).
+      success(function(msg){
+        vm.logSuccess(msg);
+      }).
+      error(function(err){
+        vm.logError('Approving candidate ' + vm.candidateName + ' failed', err);
+      });
+      vm.getNextCandidate();
+    };
 
-    function refuseCandidate() {
-      PoolService.refuseCandidate(candidateId);
-      getNextCandidate();
-    }
+    vm.refuseCandidate = function() {
+      PoolService.refuseCandidate(vm.candidateId).
+      success(function(msg){
+        vm.logSuccess(msg);
+      }).
+      error(function(err){
+        vm.logError('Refusing candidate ' + vm.candidateName + ' failed', err);
+      });
+      vm.getNextCandidate();
+    };
 
-    function clearProfile() {
+    vm.clearProfile = function() {
       vm.pics.length = 0;
       vm.candidateName = "";
       vm.candidatePicUrl = "";
-      candidateId = 0;
-      candidateSocialMediaType = 0;
-    }
+      vm.candidateId = 0;
+      vm.candidateSocialMediaType = 0;
+    };
 
-    function displayUserData(data) {
-      if (getCandidateId(data) === -1) {
-        showNoMoreUsersState();
+    vm.displayUserData = function(data) {
+      if (vm.getCandidateId(data) === -1) {
+        vm.showNoMoreUsersState();
         return;
       }
       vm.isCandidateAvailable = true;
-      vm.candidateName = getCandidateName(data);
-      vm.candidatePicUrl = getCandidateProfilePic(data);
-      candidateId = getCandidateId(data);
-      candidateSocialMediaType = getCandidateSocialMediaType(data);
-      getCandidatePics(candidateId, candidateSocialMediaType);
-    }
+      vm.candidateName = vm.getCandidateName(data);
+      vm.candidatePicUrl = vm.getCandidateProfilePic(data);
+      vm.candidateId = vm.getCandidateId(data);
+      vm.candidateSocialMediaType = vm.getCandidateSocialMediaType(data);
+      vm.getCandidatePics(vm.candidateId, vm.candidateSocialMediaType);
+    };
 
-    function showNoMoreUsersState() {
+    vm.showNoMoreUsersState = function() {
       vm.isCandidateAvailable = false;
       vm.noUsersMessage = 'NO MORE CANDIDATES';
+    };
 
-    }
-
-    function getCandidateId(data) {
+    vm.getCandidateId = function(data) {
       return data.id;
-    }
+    };
 
-    function getCandidateSocialMediaType(data) {
+    vm.getCandidateSocialMediaType = function(data) {
       return data.socialMediaType;
-    }
+    };
 
-    function getCandidatePics(candidateId, candidateSocialMediaType) {
+    vm.getCandidatePics = function(candidateId, candidateSocialMediaType) {
       return PoolService.getCandidateMedia(candidateId, candidateSocialMediaType).
-      then(displayCandidatePics);
-    }
+      success(vm.displayCandidatePics).
+      error(function(err){
+        vm.logError('Couldn\'t get ' + vm.candidateName + '\'s pics', err);
+      });
+    };
 
-    function displayCandidatePics(data) {
-      if (data.data.length === 0) {
+    vm.displayCandidatePics = function(data) {
+      if (data.length === 0) {
         console.log('No user media of candidate ' + vm.candidateName);
         return;
       }
-      candidateMedia = extractCandidateMedia(data);
-      vm.pics = getThumbsURLsfromData(candidateMedia);
-    }
+      vm.candidateMedia = data;
+      vm.pics = vm.getThumbsURLsfromData(vm.candidateMedia);
+    };
 
-    function extractCandidateMedia(data) {
-      return data.data;
-    }
+    vm.extractCandidateMedia = function(response) {
+      return response.data;
+    };
 
-    function displayPicInMainFrame(index){
-      vm.candidatePicUrl = getPicUrlFromPics(index);
-    }
+    vm.displayPicInMainFrame = function(index){
+      vm.candidatePicUrl = vm.getPicUrlFromPics(index);
+    };
 
-    function getPicUrlFromPics(i) {
-      return candidateMedia[i].images.standard_resolution.url;
-    }
+    vm.getPicUrlFromPics = function(i) {
+      return vm.candidateMedia[i].images.standard_resolution.url;
+    };
 
-    function getThumbsURLsfromData(media) {
+    vm.getThumbsURLsfromData = function(media) {
       var picUrls = [];
+      var frames = 0;
+      if (media.length < 4) frames = media.length;
+      else frames = vm.frames;
       for (var i = 0; i < frames; i++) {
         picUrls.push(media[i].images.thumbnail.url);
       }
       return picUrls;
-    }
+    };
 
-    function getCandidateName(data) {
+    vm.getCandidateName = function(data) {
       return data.userName;
-    }
+    };
 
-    function getCandidateProfilePic(data) {
-      return changeUrlToBiggerPic(data.profilePicture);
-    }
+    vm.getCandidateProfilePic = function(data) {
+      return vm.changeUrlToBiggerPic(data.profilePicture);
+    };
 
-    function changeUrlToBiggerPic(url) {
+    vm.changeUrlToBiggerPic = function(url) {
       return url.replace('s150x150', 's600x600');
-    }
+    };
+
+    vm.logError = function(msg, err) {
+      console.error(msg + ' : ' + err);
+    };
+
+    vm.logSuccess = function(msg) {
+      console.log(msg);
+      //Messages.success = msg;
+    };
+
+    vm.init();
 
   }
 })();

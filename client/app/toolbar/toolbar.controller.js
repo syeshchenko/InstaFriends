@@ -12,46 +12,39 @@
     vm.userPicUrl = '';
     vm.username = '';
 
-    vm.toggleToolbar = toggleToolbar;
-    vm.logout = logout;
-
     $rootScope.$watch('isLoggedIn', function(val) {
-      if (val === true) {
-        getUserProfile();
-      }
+      if (val === true) vm.getUserProfile();
     }); // get user profile when the user is logged in
 
-    function getUserProfile() {
+    vm.getUserProfile = function() {
       ProfileService.getProfile().
-      then(extractUserProfile).
-      then(displayUserProfile);
-    }
+      success(vm.displayUserProfile).
+      error(vm.logError);
+    };
 
-    function extractUserProfile(data) {
-      return data.data.user;
-    }
+    vm.displayUserProfile = function(data) {
+      vm.username = vm.getUsername(data);
+      vm.userPicUrl = vm.getUserPic(data);
+    };
 
-    function displayUserProfile(data) {
-      vm.username = getUsername(data);
-      vm.userPicUrl = getUserPic(data);
-    }
+    vm.getUsername = function(data) {
+      return data.userName;
+    };
 
-    function getUsername(data) {
-      return data.user_name;
-    }
+    vm.getUserPic = function(data) {
+      return data.profilePicture;
+    };
 
-    function getUserPic(data) {
-      return data.profile_picture;
-    }
-
-    function toggleToolbar() {
+    vm.toggleToolbar = function() {
       vm.isOpen = !vm.isOpen;
-    }
+    };
 
-    function logout() {
+    vm.logout = function() {
       AuthService.setUserLoggedOut();
-    }
+    };
+
+    vm.logError = function(err) {
+      console.error(err);
+    };
   }
-
-
 })();

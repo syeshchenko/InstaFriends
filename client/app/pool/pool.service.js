@@ -12,7 +12,7 @@
       getNextCandidate: getNextCandidate,
       approveCandidate: approveCandidate,
       refuseCandidate: refuseCandidate,
-      getCandidateMedia: getUserMedia
+      getCandidateMedia: getCandidateMedia
     };
 
     function approveCandidate(userId) {
@@ -23,18 +23,12 @@
       return $http.post('/api/refuseCandidate', { 'refusedUserId': userId }, {});
     }
 
-    function getUserMedia(userId, socialMediaType) {
+    function getCandidateMedia(userId, socialMediaType) {
       return $http.post('/api/userMedia', { 'userId': userId, 'socialMediaType': socialMediaType }, {});
     }
 
     function getNextCandidate() {
-      return $http.get('/api/nextCandidate').
-      success(extractData);
-    }
-
-    function extractData(data) {
-      if (!data) return {};
-      return data.data;
+      return $http.get('/api/nextCandidate');
     }
   }
 })();

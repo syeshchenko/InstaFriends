@@ -12,8 +12,6 @@
       responseError: responseError
     };
 
-    var ctr = 0; // counter for errors
-
     function response(res) {
       return res;
     }
@@ -27,7 +25,7 @@
 
       if (res.status === 400) {
         $rootScope.messages.add('Server issues. Please try again later.');
-        console.log( '400 Bad request: ' , res.data.message);
+        console.error( '400 Bad request: ' , res.data.message);
       }
 
       if (res.status < 0) {
