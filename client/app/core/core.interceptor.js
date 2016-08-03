@@ -17,7 +17,7 @@
     }
 
     function responseError(res) {
-      if (res.status === 401) {
+      if (res.status === 401 && $location.url() !== '/') {
         $location.url('/login');
         $rootScope.messages.add('Please authorize!');
         return $q.reject(response);
