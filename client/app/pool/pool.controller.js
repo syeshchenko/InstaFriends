@@ -9,15 +9,16 @@
   function PoolController($rootScope, PoolService) {
     var vm = this;
 
-    vm.candidateId = 0; // holds userId from the database
-    vm.candidateSocialMediaType = 0; // holds candidate of current candidate
+    vm.candidateId = 0;
+    vm.candidateSocialMediaType = 0;
     vm.candidateMedia = [];
     vm.candidateName='';
     vm.candidatePicUrl='';
     vm.noUsersMessage = '';
     vm.isCandidateAvailable = false;
+    $rootScope.candidateImageLoaded = false;
     vm.pics = [];
-    vm.frames = 4; // 4 pics to display
+    vm.frames = 4;
 
     vm.init = function() {
       vm.getNextCandidate();
@@ -33,25 +34,27 @@
     };
 
     vm.approveCandidate = function() {
+      $rootScope.candidateImageLoaded = false;
       PoolService.approveCandidate(vm.candidateId).
       success(function(msg){
         vm.logSuccess(msg);
+        vm.getNextCandidate();
       }).
       error(function(err){
         vm.logError('Approving candidate ' + vm.candidateName + ' failed', err);
       });
-      vm.getNextCandidate();
     };
 
     vm.refuseCandidate = function() {
+      $rootScope.candidateImageLoaded = false;
       PoolService.refuseCandidate(vm.candidateId).
       success(function(msg){
         vm.logSuccess(msg);
+        vm.getNextCandidate();
       }).
       error(function(err){
         vm.logError('Refusing candidate ' + vm.candidateName + ' failed', err);
       });
-      vm.getNextCandidate();
     };
 
     vm.clearProfile = function() {

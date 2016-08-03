@@ -51,8 +51,8 @@
   height: 80px;
   border: 2px solid;
   border-radius: 7px;
-  border-color: #999999;
-  color: #999999;
+  border-color: $blackColor;
+  color: $blackColor;
   cursor: pointer;
   line-height: 80px;
   font-size: 2rem;
@@ -60,11 +60,11 @@
   letter-spacing: 2px;
 }
 
-.control:hover {
-  border-color: $blackColor;
-  color: $blackColor;
+.inactive {
+  color: #999999;
+  border-color: #999999;
+  cursor: default;
 }
-
 
 #pics {
   margin-top: 20px;
